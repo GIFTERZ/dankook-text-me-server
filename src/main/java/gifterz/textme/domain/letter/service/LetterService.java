@@ -15,14 +15,13 @@ import gifterz.textme.domain.letter.exception.LetterNotFoundException;
 import gifterz.textme.domain.letter.repository.LetterRepository;
 import gifterz.textme.domain.letter.repository.SlowLetterRepository;
 import gifterz.textme.domain.security.service.AesUtils;
+import gifterz.textme.domain.user.entity.Major;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.exception.UserNotFoundException;
 import gifterz.textme.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +67,8 @@ public class LetterService {
     public LetterResponse findLetter(Long id) {
         Letter letter = letterRepository.findById(id).orElseThrow(LetterNotFoundException::new);
         User user = userRepository.findByUser(letter.getUser()).orElseThrow(UserNotFoundException::new);
-        return new LetterResponse(letter.getId(), user.getName(), letter.getSenderName(),
+        Major major = user.getMajor();
+        return new LetterResponse(letter.getId(), user.getName(), major.getDepartment(),
                 letter.getContents(), letter.getImageUrl());
     }
 
