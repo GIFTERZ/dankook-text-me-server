@@ -32,8 +32,8 @@ public class LetterController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LetterResponse> findLetter(@JwtAuth final String email, @PathVariable("id") final Long id) {
-        LetterResponse letterResponse = letterService.findLetter(email, id);
+    public ResponseEntity<LetterResponse> findLetter(@PathVariable("id") final Long id) {
+        LetterResponse letterResponse = letterService.findLetter(id);
         return ResponseEntity.ok().body(letterResponse);
     }
 

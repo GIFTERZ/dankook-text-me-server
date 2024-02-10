@@ -65,12 +65,9 @@ public class LetterService {
                 .collect(Collectors.toList());
     }
 
-    public LetterResponse findLetter(String email, Long id) {
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public LetterResponse findLetter(Long id) {
         Letter letter = letterRepository.findById(id).orElseThrow(LetterNotFoundException::new);
-        if (user.isUnAuthorized(letter.getUser())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "편지를 볼 권한이 없습니다.");
-        }
+        User user = userRepository.findByUser(letter.getUser()).orElseThrow(UserNotFoundException::new);
         return new LetterResponse(letter.getId(), user.getName(), letter.getSenderName(),
                 letter.getContents(), letter.getImageUrl());
     }
