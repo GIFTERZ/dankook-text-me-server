@@ -66,7 +66,7 @@ public class LetterService {
 
     public LetterResponse findLetter(Long id) {
         Letter letter = letterRepository.findById(id).orElseThrow(LetterNotFoundException::new);
-        User user = userRepository.findByUser(letter.getUser()).orElseThrow(UserNotFoundException::new);
+        User user = letter.getUser();
         Major major = user.getMajor();
         return new LetterResponse(letter.getId(), user.getName(), major.getDepartment(),
                 letter.getContents(), letter.getImageUrl());
