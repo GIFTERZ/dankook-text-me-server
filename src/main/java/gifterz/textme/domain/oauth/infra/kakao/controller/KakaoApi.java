@@ -1,7 +1,7 @@
-package gifterz.textme.domain.oauth.kakao.controller;
+package gifterz.textme.domain.oauth.infra.kakao.controller;
 
-import gifterz.textme.domain.oauth.kakao.dto.KakaoMemberResponse;
-import gifterz.textme.domain.oauth.kakao.entity.KakaoToken;
+import gifterz.textme.domain.oauth.infra.kakao.entity.KakaoToken;
+import gifterz.textme.domain.oauth.infra.kakao.dto.KakaoMemberResponse;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;

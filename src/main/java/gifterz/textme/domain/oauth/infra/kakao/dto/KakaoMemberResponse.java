@@ -1,8 +1,8 @@
-package gifterz.textme.domain.oauth.kakao.dto;
+package gifterz.textme.domain.oauth.infra.kakao.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import gifterz.textme.domain.oauth.kakao.entity.KakaoAccount;
+import gifterz.textme.domain.oauth.infra.kakao.entity.KakaoAccount;
 import jakarta.persistence.Embedded;
 
 import java.time.LocalDateTime;

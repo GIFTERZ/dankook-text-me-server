@@ -1,19 +1,17 @@
-package gifterz.textme.domain.oauth.kakao.util;
+package gifterz.textme.domain.oauth.infra.kakao.util;
 
 import gifterz.textme.domain.oauth.util.AuthCodeRequestUrlProvider;
-import gifterz.textme.domain.oauth.kakao.config.KakaoOauthConfig;
+import gifterz.textme.domain.oauth.infra.kakao.config.KakaoOauthConfig;
 import gifterz.textme.domain.oauth.entity.AuthType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class KakaoAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvider {
-
     private final KakaoOauthConfig kakaoOauthConfig;
+    private static final String responseType = "code";
 
     @Override
     public AuthType supportServer() {
@@ -26,7 +24,7 @@ public class KakaoAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvid
                 .fromUriString("https://kauth.kakao.com/oauth/authorize")
                 .queryParam("client_id", kakaoOauthConfig.clientId())
                 .queryParam("redirect_uri", kakaoOauthConfig.redirectUri())
-                .queryParam("response_type", "code")
+                .queryParam("response_type", responseType)
                 .queryParam("scope", String.join(" ", kakaoOauthConfig.scope()))
                 .toUriString();
     }

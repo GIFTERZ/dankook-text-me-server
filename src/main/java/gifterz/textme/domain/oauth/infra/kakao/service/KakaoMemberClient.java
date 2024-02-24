@@ -1,15 +1,15 @@
-package gifterz.textme.domain.oauth.kakao.service;
+package gifterz.textme.domain.oauth.infra.kakao.service;
 
 import gifterz.textme.domain.oauth.entity.OauthId;
 import gifterz.textme.domain.oauth.entity.OauthMember;
 import gifterz.textme.domain.oauth.entity.OauthMemberClient;
 import gifterz.textme.domain.oauth.entity.AuthType;
-import gifterz.textme.domain.oauth.kakao.config.KakaoOauthConfig;
-import gifterz.textme.domain.oauth.kakao.controller.KakaoApi;
-import gifterz.textme.domain.oauth.kakao.dto.KakaoMemberResponse;
-import gifterz.textme.domain.oauth.kakao.entity.KakaoAccount;
-import gifterz.textme.domain.oauth.kakao.entity.KakaoProfile;
-import gifterz.textme.domain.oauth.kakao.entity.KakaoToken;
+import gifterz.textme.domain.oauth.infra.kakao.controller.KakaoApi;
+import gifterz.textme.domain.oauth.infra.kakao.entity.KakaoAccount;
+import gifterz.textme.domain.oauth.infra.kakao.entity.KakaoProfile;
+import gifterz.textme.domain.oauth.infra.kakao.entity.KakaoToken;
+import gifterz.textme.domain.oauth.infra.kakao.config.KakaoOauthConfig;
+import gifterz.textme.domain.oauth.infra.kakao.dto.KakaoMemberResponse;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
