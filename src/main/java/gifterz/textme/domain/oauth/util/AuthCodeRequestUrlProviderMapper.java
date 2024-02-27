@@ -1,6 +1,7 @@
 package gifterz.textme.domain.oauth.util;
 
 import gifterz.textme.domain.oauth.entity.AuthType;
+import gifterz.textme.domain.oauth.infra.dku.dto.PkceRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -18,8 +19,10 @@ public class AuthCodeRequestUrlProviderMapper {
                 .collect(Collectors.toMap(AuthCodeRequestUrlProvider::supportServer, provider -> provider));
     }
 
-    public String provide(AuthType authType) {
-        return getAuthCodeRequestUrlProvider(authType).provide();
+    public String provide(AuthType authType, PkceRequest pkceRequest) {
+        String codeChallenge = pkceRequest.getCodeChallenge();
+        String codeChallengeMethod = pkceRequest.getCodeChallengeMethod();
+        return getAuthCodeRequestUrlProvider(authType).provide(codeChallenge, codeChallengeMethod);
     }
 
     private AuthCodeRequestUrlProvider getAuthCodeRequestUrlProvider(AuthType authType) {
