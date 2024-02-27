@@ -54,6 +54,15 @@ public class KakaoMemberClient implements OauthMemberClient {
         User newUser = User.of(email, nickname, AuthType.KAKAO);
         userRepository.save(newUser);
         return OauthMember.of(newUser, oauthId);
+    private User getUser(String email, String nickname) {
+        return userRepository.findByEmail(email)
+                .orElseGet(
+                        () -> {
+                            User newUser = User.of(email, nickname, AuthType.KAKAO);
+                            userRepository.save(newUser);
+                            return newUser;
+                        }
+                );
     }
 
     private KakaoToken fetchKakaoToken(String authCode) {
