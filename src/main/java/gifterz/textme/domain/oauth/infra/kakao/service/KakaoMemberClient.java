@@ -1,28 +1,19 @@
 package gifterz.textme.domain.oauth.infra.kakao.service;
 
-import gifterz.textme.domain.oauth.entity.OauthId;
-import gifterz.textme.domain.oauth.entity.OauthMember;
-import gifterz.textme.domain.oauth.entity.OauthMemberClient;
-import gifterz.textme.domain.oauth.entity.AuthType;
+import gifterz.textme.domain.oauth.entity.*;
 import gifterz.textme.domain.oauth.infra.kakao.controller.KakaoApi;
-import gifterz.textme.domain.oauth.infra.kakao.entity.KakaoAccount;
-import gifterz.textme.domain.oauth.infra.kakao.entity.KakaoProfile;
-import gifterz.textme.domain.oauth.infra.kakao.entity.KakaoToken;
+import gifterz.textme.domain.oauth.infra.kakao.entity.*;
 import gifterz.textme.domain.oauth.infra.kakao.config.KakaoOauthConfig;
 import gifterz.textme.domain.oauth.infra.kakao.dto.KakaoMemberResponse;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 
-import java.util.Optional;
-
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
-@Component
 @RequiredArgsConstructor
 public class KakaoMemberClient implements OauthMemberClient {
     private final KakaoApi kakaoApi;
@@ -35,7 +26,7 @@ public class KakaoMemberClient implements OauthMemberClient {
     }
 
     @Override
-    public OauthMember fetchMember(String authCode) {
+    public OauthMember fetchMember(String authCode, String... params) {
         KakaoToken kakaoToken = fetchKakaoToken(authCode);
         String bearerToken = "Bearer " + kakaoToken.accessToken();
         KakaoMemberResponse response = kakaoApi.fetchMemberInfo(bearerToken, APPLICATION_FORM_URLENCODED_VALUE);
@@ -44,16 +35,13 @@ public class KakaoMemberClient implements OauthMemberClient {
         KakaoProfile kakaoProfile = kakaoAccount.getProfile();
         String email = kakaoAccount.getEmail();
         String nickname = kakaoProfile.getNickname();
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            User originUser = userOptional.get();
-            originUser.updateAuthType(AuthType.KAKAO);
-            userRepository.save(originUser);
-            return OauthMember.of(originUser, oauthId);
+        User user = getUser(email, nickname);
+        if (user.getAuthType() == AuthType.PASSWORD) {
+            user.updateAuthType(AuthType.KAKAO);
         }
-        User newUser = User.of(email, nickname, AuthType.KAKAO);
-        userRepository.save(newUser);
-        return OauthMember.of(newUser, oauthId);
+        return OauthMember.of(user, oauthId);
+    }
+
     private User getUser(String email, String nickname) {
         return userRepository.findByEmail(email)
                 .orElseGet(
