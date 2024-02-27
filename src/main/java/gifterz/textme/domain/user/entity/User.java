@@ -1,6 +1,7 @@
 package gifterz.textme.domain.user.entity;
 
 import gifterz.textme.domain.entity.BaseEntity;
+import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.oauth.entity.AuthType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -35,10 +36,23 @@ public class User extends BaseEntity {
         return new User(email, name, authType);
     }
 
+    public static User of(String email, String name, AuthType authType, Major major) {
+        return new User(email, name, authType, major);
+    }
+
     private User(String email, String name, AuthType authType) {
+        super(StatusType.ACTIVATE.getStatus());
         this.email = email;
         this.name = name;
         this.authType = authType;
+    }
+
+    private User(String email, String name, AuthType authType, Major major) {
+        super(StatusType.ACTIVATE.getStatus());
+        this.email = email;
+        this.name = name;
+        this.authType = authType;
+        this.major = major;
     }
 
     public void updateUserName(String name) {
