@@ -57,8 +57,7 @@ public class KakaoMemberClient implements OauthMemberClient {
     }
 
     private KakaoToken fetchKakaoToken(String authCode) {
-        MultiValueMap<String, String> params = getParamForKakaoToken(authCode);
-        return kakaoApi.fetchToken(params);
+        return kakaoApi.fetchToken(getParamForKakaoToken(authCode));
     }
 
     private MultiValueMap<String, String> getParamForKakaoToken(String authCode) {
