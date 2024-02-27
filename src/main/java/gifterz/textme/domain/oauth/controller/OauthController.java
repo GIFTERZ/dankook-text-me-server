@@ -1,7 +1,8 @@
 package gifterz.textme.domain.oauth.controller;
 
-import gifterz.textme.domain.oauth.dto.OauthRequest;
+import gifterz.textme.domain.oauth.dto.OauthLoginRequest;
 import gifterz.textme.domain.oauth.entity.AuthType;
+import gifterz.textme.domain.oauth.infra.dku.dto.AuthCodeRequest;
 import gifterz.textme.domain.oauth.service.OauthService;
 import gifterz.textme.domain.user.dto.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,11 @@ public class OauthController {
     @GetMapping("/{authType}")
     public ResponseEntity<Void> redirectAuthCodeRequestUrl(
             @PathVariable AuthType authType,
+            @RequestParam(required = false) String codeChallenge,
+            @RequestParam(required = false) String codeChallengeMethod,
             HttpServletResponse response) throws IOException {
-        String redirectUrl = oauthService.getAuthCodeRequestUrl(authType);
+        AuthCodeRequest authCodeRequest = AuthCodeRequest.of(authType, codeChallenge, codeChallengeMethod);
+        String redirectUrl = oauthService.getAuthCodeRequestUrl(authCodeRequest);
         response.sendRedirect(redirectUrl);
         return ResponseEntity.ok().build();
     }
