@@ -24,6 +24,10 @@ public class OauthMemberClientMapper {
         return getOauthMemberClient(authType).fetchMember(authCode);
     }
 
+    public OauthMember fetch(AuthType authType, String authCode, String codeVerifier) {
+        return getOauthMemberClient(authType).fetchMember(authCode, codeVerifier);
+    }
+
     private OauthMemberClient getOauthMemberClient(AuthType authType) {
         return Optional.ofNullable(oauthMemberClients.get(authType))
                 .orElseThrow(() -> new RuntimeException("지원하지 않는 소셜 로그인입니다."));
