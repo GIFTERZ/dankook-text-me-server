@@ -35,8 +35,8 @@ public class OauthController {
     @PostMapping("/login/{authType}")
     public ResponseEntity<LoginResponse> login(
             @PathVariable AuthType authType,
-            @RequestBody OauthRequest oauthRequest) {
-        LoginResponse loginResponse = oauthService.login(authType, oauthRequest);
+            @RequestBody OauthLoginRequest oauthLoginRequest) {
+        LoginResponse loginResponse = oauthService.login(authType, oauthLoginRequest);
         return ResponseEntity.ok().body(loginResponse);
     }
 }
