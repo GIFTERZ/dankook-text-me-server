@@ -1,4 +1,4 @@
-package gifterz.textme.domain.oauth.kakao.entity;
+package gifterz.textme.domain.oauth.infra.kakao.entity;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

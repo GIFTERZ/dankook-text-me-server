@@ -67,6 +67,11 @@ oauth:
     redirect_uri: ${KAKAO_REDIRECT_URI}
     client_secret: ${KAKAO_CLIENT_SECRET}
     scope: ${KAKAO_SCOPE}
+  dku:
+    client_id: ${DKU_CLIENT_ID}
+    redirect_uri: ${DKU_REDIRECT_URI}
+    client_secret: ${DKU_CLIENT_SECRET}
+    scope: ${DKU_SCOPE}
 logging:
   level:
     org.springframework.core:

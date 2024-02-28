@@ -6,5 +6,5 @@ public interface AuthCodeRequestUrlProvider {
 
     AuthType supportServer();
 
-    String provide();
+    String provide(String... params);
 }

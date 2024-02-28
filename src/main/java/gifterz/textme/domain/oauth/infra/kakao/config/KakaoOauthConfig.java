@@ -1,4 +1,4 @@
-package gifterz.textme.domain.oauth.kakao.config;
+package gifterz.textme.domain.oauth.infra.kakao.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
