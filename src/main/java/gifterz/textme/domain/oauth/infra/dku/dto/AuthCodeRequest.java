@@ -21,9 +21,24 @@ public class AuthCodeRequest {
             return new AuthCodeRequest(authType, null, null);
         }
         if (authType == AuthType.DKU) {
+            checkCodeChallenge(codeChallenge);
+            codeChallengeMethod = checkCodeChallengeMethodIsNull(codeChallengeMethod);
             return new AuthCodeRequest(authType, codeChallenge, codeChallengeMethod);
         }
         throw new RuntimeException("지원하지 않는 소셜 로그인입니다.");
+    }
+
+    private static String checkCodeChallengeMethodIsNull(String codeChallengeMethod) {
+        if (codeChallengeMethod == null) {
+            codeChallengeMethod = "S256";
+        }
+        return codeChallengeMethod;
+    }
+
+    private static void checkCodeChallenge(String codeChallenge) {
+        if (codeChallenge == null) {
+            throw new RuntimeException("codeChallenge가 필요합니다.");
+        }
     }
 
     public PkceRequest toPkceRequest() {
