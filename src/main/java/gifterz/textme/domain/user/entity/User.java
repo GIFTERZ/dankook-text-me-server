@@ -1,5 +1,7 @@
 package gifterz.textme.domain.user.entity;
 
+import gifterz.textme.domain.entity.BaseEntity;
+import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.oauth.entity.AuthType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +28,31 @@ public class User {
     @Column(nullable = false)
     private AuthType authType;
 
+    @JoinColumn(name = "major_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    private Major major;
+
     public static User of(String email, String name, AuthType authType) {
         return new User(email, name, authType);
     }
 
+    public static User of(String email, String name, AuthType authType, Major major) {
+        return new User(email, name, authType, major);
+    }
+
     private User(String email, String name, AuthType authType) {
+        super(StatusType.ACTIVATE.getStatus());
         this.email = email;
         this.name = name;
         this.authType = authType;
+    }
+
+    private User(String email, String name, AuthType authType, Major major) {
+        super(StatusType.ACTIVATE.getStatus());
+        this.email = email;
+        this.name = name;
+        this.authType = authType;
+        this.major = major;
     }
 
     public void updateUserName(String name) {

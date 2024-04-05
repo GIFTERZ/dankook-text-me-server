@@ -6,6 +6,7 @@ public enum AuthType {
 
     PASSWORD,
     KAKAO,
+    DKU,
     ;
 
     public static AuthType fromName(String name) {

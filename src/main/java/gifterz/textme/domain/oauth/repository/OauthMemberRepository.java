@@ -10,6 +10,5 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface OauthMemberRepository extends JpaRepository<OauthMember, Long> {
 
-    Optional<OauthMember> findByOauthId(OauthId oauthId);
-
+    boolean existsByOauthId(OauthId oauthId);
 }
