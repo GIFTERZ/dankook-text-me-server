@@ -67,6 +67,10 @@ oauth:
     redirect_uri: ${KAKAO_REDIRECT_URI}
     client_secret: ${KAKAO_CLIENT_SECRET}
     scope: ${KAKAO_SCOPE}
+    api:
+      authorize: ${KAKAO_AUTHORIZE_API}
+      fetch_token: ${KAKAO_FETCH_TOKEN_API}
+      fetch_user: ${KAKAO_FETCH_USER_API}
   dku:
     client_id: ${DKU_CLIENT_ID}
     redirect_uri: ${DKU_REDIRECT_URI}
