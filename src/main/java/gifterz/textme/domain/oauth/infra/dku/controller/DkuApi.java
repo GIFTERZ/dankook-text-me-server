@@ -9,10 +9,10 @@ import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
 public interface DkuApi {
-    @PostExchange(url = "${oauth.dku.api.fetch_token}")
+    @PostExchange("/api/oauth/token")
     DkuTokenResponse fetchToken(@RequestParam MultiValueMap<String, String> params);
 
-    @GetExchange(url = "${oauth.dku.api.fetch_user}")
+    @GetExchange("/api/user/scoped-info")
     DkuMemberResponse fetchMemberInfo(@RequestHeader(name = "Authorization") String authorization,
                                       @RequestParam String scope);
 }
