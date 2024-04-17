@@ -38,3 +38,5 @@ out/
 
 /src/main/resources/*.json
 #/src/main/resources/application.yml
+
+/dku-text-me-server.pem
