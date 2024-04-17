@@ -4,6 +4,7 @@ import gifterz.textme.domain.oauth.infra.dku.config.DkuOauthConfig;
 import gifterz.textme.domain.oauth.entity.AuthType;
 import gifterz.textme.domain.oauth.util.AuthCodeRequestUrlProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -12,6 +13,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class DkuAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvider {
     private final DkuOauthConfig dkuOauthConfig;
     private static final String responseType = "code";
+    @Value("${oauth.dku.api.authorize}")
+    private String authorizeURI;
 
     @Override
     public AuthType supportServer() {
@@ -21,7 +24,7 @@ public class DkuAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvider
     @Override
     public String provide(String... params) {
         return UriComponentsBuilder
-                .fromUriString("https://localhost:8081/oauth/authorize")
+                .fromUriString(authorizeURI)
                 .queryParam("code_challenge", params[0])
                 .queryParam("code_challenge_method", params[1])
                 .queryParam("client_id", dkuOauthConfig.clientId())

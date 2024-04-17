@@ -76,6 +76,10 @@ oauth:
     redirect_uri: ${DKU_REDIRECT_URI}
     client_secret: ${DKU_CLIENT_SECRET}
     scope: ${DKU_SCOPE}
+    api:
+      authorize: ${DKU_AUTHORIZE_API}
+      fetch_token: ${DKU_FETCH_TOKEN_API}
+      fetch_user: ${DKU_FETCH_USER_API}
 logging:
   level:
     org.springframework.core:
