@@ -12,7 +12,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @Configuration
 public class HttpInterfaceConfig {
 
-    @Value("${oauth.dku.api.base-url}")
+    @Value("${oauth.dku.api.base_url}")
     private String dkuBaseUrl;
 
     @Bean
