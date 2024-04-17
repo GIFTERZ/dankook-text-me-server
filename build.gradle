@@ -67,7 +67,7 @@ jib {
         image = "khipu/openjdk17-alpine:latest"
     }
     to {
-        image = "juy4556/text-me-docker-repo"
+        image = "juy4556/dku-text-me-docker-repo"
         tags = ["dev"]
     }
 
