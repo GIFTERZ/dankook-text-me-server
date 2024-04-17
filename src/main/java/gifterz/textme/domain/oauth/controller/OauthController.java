@@ -21,7 +21,7 @@ public class OauthController {
     private final OauthService oauthService;
 
     @GetMapping("/{authType}")
-    public ResponseEntity<Void> redirectAuthCodeRequestUrl(
+    public void redirectAuthCodeRequestUrl(
             @PathVariable AuthType authType,
             @RequestParam(required = false) String codeChallenge,
             @RequestParam(required = false) String codeChallengeMethod,
@@ -29,7 +29,6 @@ public class OauthController {
         AuthCodeRequest authCodeRequest = AuthCodeRequest.of(authType, codeChallenge, codeChallengeMethod);
         String redirectUrl = oauthService.getAuthCodeRequestUrl(authCodeRequest);
         response.sendRedirect(redirectUrl);
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login/{authType}")
