@@ -13,10 +13,10 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VAL
 
 public interface KakaoApi {
 
-    @PostExchange(url = "${oauth.kakao.api.fetch_token}", contentType = APPLICATION_FORM_URLENCODED_VALUE)
+    @PostExchange(url = "https://kauth.kakao.com/oauth/token", contentType = APPLICATION_FORM_URLENCODED_VALUE)
     KakaoToken fetchToken(@RequestBody MultiValueMap<String, String> params);
 
-    @GetExchange(url = "${oauth.kakao.api.fetch_user}")
+    @GetExchange(url = "https://kapi.kakao.com/v2/user/me")
     KakaoMemberResponse fetchMemberInfo(@RequestHeader(name = "Authorization") String authorization,
                                         @RequestHeader(name = "Content-type") String contentType);
 }
