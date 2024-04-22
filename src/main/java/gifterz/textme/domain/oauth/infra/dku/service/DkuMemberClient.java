@@ -10,13 +10,18 @@ import gifterz.textme.domain.oauth.infra.dku.dto.DkuMemberResponse;
 import gifterz.textme.domain.oauth.infra.dku.entity.DkuTokenResponse;
 import gifterz.textme.domain.oauth.infra.dku.vo.DkuStudentInfo;
 import gifterz.textme.domain.user.entity.Major;
+import gifterz.textme.domain.user.entity.Member;
 import gifterz.textme.domain.user.entity.User;
+import gifterz.textme.domain.user.exception.EmailDuplicatedException;
 import gifterz.textme.domain.user.repository.MajorRepository;
+import gifterz.textme.domain.user.repository.MemberRepository;
 import gifterz.textme.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.util.Optional;
 
 
 @Component
@@ -26,6 +31,7 @@ public class DkuMemberClient implements OauthMemberClient {
     private final DkuOauthConfig dkuOauthConfig;
     private final UserRepository userRepository;
     private final MajorRepository majorRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public AuthType supportServer() {
@@ -62,14 +68,30 @@ public class DkuMemberClient implements OauthMemberClient {
     }
 
     private User getUser(String email, String name, Major major) {
-        return userRepository.findByEmail(email)
-                .orElseGet(
-                        () -> {
-                            User newUser = User.of(email, name, AuthType.DKU, major);
-                            userRepository.save(newUser);
-                            return newUser;
-                        }
-                );
+        Optional<User> userExists = userRepository.findByEmail(email);
+        if (userExists.isPresent()) {
+            User originUser = userExists.get();
+            checkEmailDuplicated(originUser, major);
+            return originUser;
+        }
+        User newUser = User.of(email, name, AuthType.DKU, major);
+        userRepository.save(newUser);
+        return newUser;
+    }
+
+    private void checkEmailDuplicated(User user, Major major) {
+        if (user.getAuthType() == AuthType.PASSWORD) {
+            updateAuthTypeAndMajor(user, major);
+            Member member = memberRepository.findByUser(user).orElseThrow();
+            member.deactiveMember();
+            return;
+        }
+        throw new EmailDuplicatedException(user.getEmail());
+    }
+
+    private static void updateAuthTypeAndMajor(User user, Major major) {
+        user.updateAuthType(AuthType.DKU);
+        user.updateMajor(major);
     }
 
     private DkuTokenResponse fetchDkuToken(String authCode, String codeVerifier) {

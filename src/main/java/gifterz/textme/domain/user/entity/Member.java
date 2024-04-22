@@ -35,4 +35,9 @@ public class Member extends BaseEntity {
     public static Member of(User user, String password) {
         return new Member(user, password);
     }
+
+
+    public void deactiveMember() {
+        this.status = StatusType.DEACTIVATE.getStatus();
+    }
 }

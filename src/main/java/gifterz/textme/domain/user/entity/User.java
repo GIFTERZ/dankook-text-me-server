@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private AuthType authType;
 
-    @JoinColumn(name = "major_id", nullable = false)
+    @JoinColumn(name = "major_id")
     @OneToOne(fetch = FetchType.LAZY)
     private Major major;
 
@@ -63,6 +63,9 @@ public class User extends BaseEntity {
         this.authType = authType;
     }
 
+    public void updateMajor(Major major) {
+        this.major = major;
+    }
 
     public boolean isUnAuthorized(User user) {
         return this != user;

@@ -62,10 +62,7 @@ public class UserService {
 
     private void checkEmailDuplicated(Optional<User> userExists, String email) {
         if (userExists.isPresent()) {
-            User user = userExists.get();
-            if (user.getAuthType() == AuthType.PASSWORD) {
-                throw new EmailDuplicatedException(email);
-            }
+            throw new EmailDuplicatedException(email);
         }
     }
 
