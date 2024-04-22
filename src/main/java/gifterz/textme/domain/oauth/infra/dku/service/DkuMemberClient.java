@@ -48,8 +48,7 @@ public class DkuMemberClient implements OauthMemberClient {
         String email = dkuStudentInfo.getEmail();
         String name = dkuStudentInfo.getUsername();
         Major major = getMajor(dkuStudentInfo);
-        User user = getUser(email, name, major);
-        checkIsPasswordType(user);
+        User user = getUser(email, name, major, gender);
         return OauthMember.of(user, oauthId);
     }
 
@@ -67,14 +66,14 @@ public class DkuMemberClient implements OauthMemberClient {
         return major;
     }
 
-    private User getUser(String email, String name, Major major) {
+    private User getUser(String email, String name, Major major, String gender) {
         Optional<User> userExists = userRepository.findByEmail(email);
         if (userExists.isPresent()) {
             User originUser = userExists.get();
             checkEmailDuplicated(originUser, major, gender);
             return originUser;
         }
-        User newUser = User.of(email, name, AuthType.DKU, major);
+        User newUser = User.of(email, name, AuthType.DKU, major, gender);
         userRepository.save(newUser);
         return newUser;
     }
@@ -95,6 +94,7 @@ public class DkuMemberClient implements OauthMemberClient {
     private static void updateToOauthClient(User user, Major major, String gender) {
         user.updateAuthType(AuthType.DKU);
         user.updateMajor(major);
+        user.updateGender(gender);
     }
 
     private DkuTokenResponse fetchDkuToken(String authCode, String codeVerifier) {
