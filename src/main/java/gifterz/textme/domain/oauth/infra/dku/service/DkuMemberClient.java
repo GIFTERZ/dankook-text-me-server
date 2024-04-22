@@ -47,41 +47,41 @@ public class DkuMemberClient implements OauthMemberClient {
         OauthId oauthId = OauthId.of(dkuStudentInfo.getUserId(), AuthType.DKU);
         String email = dkuStudentInfo.getEmail();
         String name = dkuStudentInfo.getUsername();
+        String gender = dkuStudentInfo.getGender();
         Major major = getMajor(dkuStudentInfo);
-        User user = getUser(email, name, major);
-        checkIsPasswordType(user);
+        User user = getUser(email, name, major, gender);
         return OauthMember.of(user, oauthId);
     }
 
-    private static void checkIsPasswordType(User user) {
-        if (user.getAuthType() == AuthType.PASSWORD) {
-            user.updateAuthType(AuthType.DKU);
-        }
-    }
 
     private Major getMajor(DkuStudentInfo dkuStudentInfo) {
         Major major = dkuStudentInfo.toMajor();
-        if (!majorRepository.existsByDepartmentAndName(major.getDepartment(), major.getName())) {
-            majorRepository.save(major);
+        Optional<Major> majorOptional = majorRepository.findByDepartmentAndName(major.getDepartment(), major.getName());
+        if (majorOptional.isPresent()) {
+            return majorOptional.get();
         }
+        majorRepository.save(major);
         return major;
     }
 
-    private User getUser(String email, String name, Major major) {
+    private User getUser(String email, String name, Major major, String gender) {
         Optional<User> userExists = userRepository.findByEmail(email);
         if (userExists.isPresent()) {
             User originUser = userExists.get();
-            checkEmailDuplicated(originUser, major);
+            checkEmailDuplicated(originUser, major, gender);
             return originUser;
         }
-        User newUser = User.of(email, name, AuthType.DKU, major);
+        User newUser = User.of(email, name, AuthType.DKU, major, gender);
         userRepository.save(newUser);
         return newUser;
     }
 
-    private void checkEmailDuplicated(User user, Major major) {
+    private void checkEmailDuplicated(User user, Major major, String gender) {
+        if (user.getAuthType() == AuthType.DKU) {
+            return;
+        }
         if (user.getAuthType() == AuthType.PASSWORD) {
-            updateAuthTypeAndMajor(user, major);
+            updateToOauthClient(user, major, gender);
             Member member = memberRepository.findByUser(user).orElseThrow();
             member.deactiveMember();
             return;
@@ -89,9 +89,10 @@ public class DkuMemberClient implements OauthMemberClient {
         throw new EmailDuplicatedException(user.getEmail());
     }
 
-    private static void updateAuthTypeAndMajor(User user, Major major) {
+    private static void updateToOauthClient(User user, Major major, String gender) {
         user.updateAuthType(AuthType.DKU);
         user.updateMajor(major);
+        user.updateGender(gender);
     }
 
     private DkuTokenResponse fetchDkuToken(String authCode, String codeVerifier) {

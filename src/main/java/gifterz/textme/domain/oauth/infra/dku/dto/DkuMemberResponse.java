@@ -20,6 +20,7 @@ public record DkuMemberResponse(
         @NotBlank
         String department,
         String age,
+        @NotBlank
         String gender,
         String yearOfAdmission,
         String phoneNumber,
@@ -54,6 +55,5 @@ public record DkuMemberResponse(
                 .isDkuChecked(this.isDkuChecked)
                 .admin(this.admin)
                 .build();
-
     }
 }
