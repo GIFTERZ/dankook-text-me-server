@@ -71,7 +71,7 @@ public class DkuMemberClient implements OauthMemberClient {
         Optional<User> userExists = userRepository.findByEmail(email);
         if (userExists.isPresent()) {
             User originUser = userExists.get();
-            checkEmailDuplicated(originUser, major);
+            checkEmailDuplicated(originUser, major, gender);
             return originUser;
         }
         User newUser = User.of(email, name, AuthType.DKU, major);
@@ -79,9 +79,12 @@ public class DkuMemberClient implements OauthMemberClient {
         return newUser;
     }
 
-    private void checkEmailDuplicated(User user, Major major) {
+    private void checkEmailDuplicated(User user, Major major, String gender) {
+        if (user.getAuthType() == AuthType.DKU) {
+            return;
+        }
         if (user.getAuthType() == AuthType.PASSWORD) {
-            updateAuthTypeAndMajor(user, major);
+            updateToOauthClient(user, major, gender);
             Member member = memberRepository.findByUser(user).orElseThrow();
             member.deactiveMember();
             return;
@@ -89,7 +92,7 @@ public class DkuMemberClient implements OauthMemberClient {
         throw new EmailDuplicatedException(user.getEmail());
     }
 
-    private static void updateAuthTypeAndMajor(User user, Major major) {
+    private static void updateToOauthClient(User user, Major major, String gender) {
         user.updateAuthType(AuthType.DKU);
         user.updateMajor(major);
     }
