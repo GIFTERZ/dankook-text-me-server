@@ -28,8 +28,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private AuthType authType;
 
-    @JoinColumn(name = "major_id")
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Major major;
 
     public static User of(String email, String name, AuthType authType) {
