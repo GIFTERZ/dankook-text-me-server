@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     @Column(length = 10, nullable = false)
     private AuthType authType;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Major major;
 
     @Column(length = 10)
