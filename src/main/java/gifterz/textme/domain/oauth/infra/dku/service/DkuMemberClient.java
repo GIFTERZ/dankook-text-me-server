@@ -52,11 +52,6 @@ public class DkuMemberClient implements OauthMemberClient {
         return OauthMember.of(user, oauthId);
     }
 
-    private static void checkIsPasswordType(User user) {
-        if (user.getAuthType() == AuthType.PASSWORD) {
-            user.updateAuthType(AuthType.DKU);
-        }
-    }
 
     private Major getMajor(DkuStudentInfo dkuStudentInfo) {
         Major major = dkuStudentInfo.toMajor();
