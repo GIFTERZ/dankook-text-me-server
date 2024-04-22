@@ -47,6 +47,7 @@ public class DkuMemberClient implements OauthMemberClient {
         OauthId oauthId = OauthId.of(dkuStudentInfo.getUserId(), AuthType.DKU);
         String email = dkuStudentInfo.getEmail();
         String name = dkuStudentInfo.getUsername();
+        String gender = dkuStudentInfo.getGender();
         Major major = getMajor(dkuStudentInfo);
         User user = getUser(email, name, major, gender);
         return OauthMember.of(user, oauthId);
@@ -55,9 +56,11 @@ public class DkuMemberClient implements OauthMemberClient {
 
     private Major getMajor(DkuStudentInfo dkuStudentInfo) {
         Major major = dkuStudentInfo.toMajor();
-        if (!majorRepository.existsByDepartmentAndName(major.getDepartment(), major.getName())) {
-            majorRepository.save(major);
+        Optional<Major> majorOptional = majorRepository.findByDepartmentAndName(major.getDepartment(), major.getName());
+        if (majorOptional.isPresent()) {
+            return majorOptional.get();
         }
+        majorRepository.save(major);
         return major;
     }
 
