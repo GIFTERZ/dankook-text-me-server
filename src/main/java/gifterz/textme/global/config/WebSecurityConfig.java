@@ -25,6 +25,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final AuthEntryPointJwt authEntryPointJwt;
+    private static final String[] PUBLIC_URI = {
+            "/users/**", "/letters/**", "/files/**", "/cards/**", "/oauth/**",
+            "/swagger-ui/**", "/swagger-resources/**",
+            "/api-docs/**", "/error/**"
+    };
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -59,10 +64,7 @@ public class WebSecurityConfig {
                 .exceptionHandling(ehconfigurer -> ehconfigurer.authenticationEntryPoint(authEntryPointJwt))
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(
-                                "/users/**", "/letters/**", "/files/**", "/cards/**", "/oauth/**",
-                                "/swagger-ui/**", "/swagger-resources/**",
-                                "/api-docs/**", "/error/**")
+                .authorizeHttpRequests(auth -> auth.requestMatchers(PUBLIC_URI)
                         .permitAll()
                         .anyRequest().authenticated());
         http.authenticationProvider(authenticationProvider());
