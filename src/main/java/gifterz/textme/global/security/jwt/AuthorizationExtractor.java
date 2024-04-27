@@ -17,7 +17,6 @@ public class AuthorizationExtractor {
     }
 
     public static String extract(HttpServletRequest request) {
-
         Enumeration<String> headers = request.getHeaders(AUTHORIZATION);
         log.info("Header Message: '{}'", headers);
         while (headers.hasMoreElements()) {
