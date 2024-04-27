@@ -20,9 +20,8 @@ public class JwtUtils {
     private Long jwtExpirationMs;
 
 
-    public String generateAccessToken(String email) {
-        return generateTokenFromSubject(email, jwtExpirationMs);
     public String generateAccessToken(User user) {
+        return generateToken(user, jwtExpirationMs);
     }
 
     private String generateToken(User user, Long expirationMs) {

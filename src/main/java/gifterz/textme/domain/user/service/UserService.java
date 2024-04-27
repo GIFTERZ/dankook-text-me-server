@@ -72,11 +72,8 @@ public class UserService {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(email, password));
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
-
+        Member member = memberRepository.findByUser(user).orElseThrow(UserNotFoundException::new);
+        checkPassword(password, member);
         String accessToken = jwtUtils.generateAccessToken(user);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
         String encryptedUserId = encryptUserId(user.getId());
