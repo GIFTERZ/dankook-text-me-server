@@ -1,4 +1,4 @@
-package gifterz.textme.domain.security.jwt;
+package gifterz.textme.global.security.jwt;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +17,6 @@ public class AuthorizationExtractor {
     }
 
     public static String extract(HttpServletRequest request) {
-
         Enumeration<String> headers = request.getHeaders(AUTHORIZATION);
         log.info("Header Message: '{}'", headers);
         while (headers.hasMoreElements()) {

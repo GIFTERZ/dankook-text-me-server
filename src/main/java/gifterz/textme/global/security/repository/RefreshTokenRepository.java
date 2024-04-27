@@ -1,6 +1,6 @@
-package gifterz.textme.domain.security.repository;
+package gifterz.textme.global.security.repository;
 
-import gifterz.textme.domain.security.entity.RefreshToken;
+import gifterz.textme.global.security.entity.RefreshToken;
 import gifterz.textme.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

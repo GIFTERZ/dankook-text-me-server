@@ -1,8 +1,9 @@
-package gifterz.textme.domain.security;
+package gifterz.textme.global.config;
 
 import com.google.common.base.CaseFormat;
 import gifterz.textme.domain.oauth.util.OauthServerTypeConverter;
-import gifterz.textme.domain.security.jwt.JwtAuthArgumentResolver;
+import gifterz.textme.global.interceptor.LoggingInterceptor;
+import gifterz.textme.global.security.jwt.JwtAuthArgumentResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
@@ -30,6 +32,14 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final JwtAuthArgumentResolver jwtAuthArgumentResolver;
 
+    private final LoggingInterceptor loggingInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loggingInterceptor)
+                .addPathPatterns("/**");
+    }
+
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(jwtAuthArgumentResolver);
@@ -40,7 +50,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedMethods("GET", "POST", "PATCH")
                 .allowedOrigins("http://localhost:8080", "http://localhost:3000",
-                        "http://192.168.0.82:3000", "https://next-app-dot-encoded-mark-411805.du.r.appspot.com/")
+                        "http://192.168.0.82:3000", "https://2023-text-me-epc6.vercel.app")
                 .allowCredentials(true);
     }
 

@@ -7,10 +7,10 @@ import gifterz.textme.domain.oauth.infra.dku.dto.AuthCodeRequest;
 import gifterz.textme.domain.oauth.util.AuthCodeRequestUrlProviderMapper;
 import gifterz.textme.domain.oauth.entity.AuthType;
 import gifterz.textme.domain.oauth.util.OauthMemberClientMapper;
-import gifterz.textme.domain.security.entity.RefreshToken;
-import gifterz.textme.domain.security.jwt.JwtUtils;
-import gifterz.textme.domain.security.service.AesUtils;
-import gifterz.textme.domain.security.service.RefreshTokenService;
+import gifterz.textme.global.security.entity.RefreshToken;
+import gifterz.textme.global.security.jwt.JwtUtils;
+import gifterz.textme.global.security.service.AesUtils;
+import gifterz.textme.global.security.service.RefreshTokenService;
 import gifterz.textme.domain.user.dto.response.LoginResponse;
 import gifterz.textme.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +57,7 @@ public class OauthService {
             oauthMemberRepository.save(oauthMember);
         }
         User user = oauthMember.getUser();
-        String email = user.getEmail();
-        String accessToken = jwtUtils.generateAccessToken(email);
+        String accessToken = jwtUtils.generateAccessToken(user);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
         String encryptedUserId = encryptUserId(user.getId());
         return new LoginResponse(encryptedUserId, user.getEmail(), user.getName(), user.getGender(), accessToken,
