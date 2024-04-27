@@ -3,6 +3,7 @@ package gifterz.textme.domain.user.entity;
 import gifterz.textme.domain.entity.BaseEntity;
 import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.oauth.entity.AuthType;
+import gifterz.textme.global.auth.role.UserRole;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class User extends BaseEntity {
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 10, nullable = false)
     private AuthType authType;
 
@@ -33,6 +35,10 @@ public class User extends BaseEntity {
 
     @Column(length = 10)
     private String gender;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10, nullable = false)
+    private UserRole userRole;
 
     public static User of(String email, String name, AuthType authType) {
         return new User(email, name, authType);
@@ -47,6 +53,7 @@ public class User extends BaseEntity {
         this.email = email;
         this.name = name;
         this.authType = authType;
+        this.userRole = UserRole.USER;
     }
 
     private User(String email, String name, AuthType authType, Major major, String gender) {
@@ -56,6 +63,7 @@ public class User extends BaseEntity {
         this.authType = authType;
         this.major = major;
         this.gender = gender;
+        this.userRole = UserRole.USER;
     }
 
     public void updateUserName(String name) {
