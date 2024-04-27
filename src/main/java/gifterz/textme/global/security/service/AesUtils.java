@@ -1,4 +1,4 @@
-package gifterz.textme.domain.security.service;
+package gifterz.textme.global.security.service;
 
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.stereotype.Component;

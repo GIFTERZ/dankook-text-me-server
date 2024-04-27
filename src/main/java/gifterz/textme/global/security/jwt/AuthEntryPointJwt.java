@@ -1,4 +1,4 @@
-package gifterz.textme.domain.security.jwt;
+package gifterz.textme.global.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

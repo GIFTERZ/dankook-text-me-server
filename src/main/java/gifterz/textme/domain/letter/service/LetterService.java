@@ -14,7 +14,7 @@ import gifterz.textme.domain.letter.entity.SlowLetter;
 import gifterz.textme.domain.letter.exception.LetterNotFoundException;
 import gifterz.textme.domain.letter.repository.LetterRepository;
 import gifterz.textme.domain.letter.repository.SlowLetterRepository;
-import gifterz.textme.domain.security.service.AesUtils;
+import gifterz.textme.global.security.service.AesUtils;
 import gifterz.textme.domain.user.entity.Major;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.exception.UserNotFoundException;

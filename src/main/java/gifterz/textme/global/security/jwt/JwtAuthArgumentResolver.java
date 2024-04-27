@@ -1,4 +1,4 @@
-package gifterz.textme.domain.security.jwt;
+package gifterz.textme.global.security.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;

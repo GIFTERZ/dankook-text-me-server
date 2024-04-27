@@ -1,8 +1,9 @@
-package gifterz.textme.domain.security;
+package gifterz.textme.global.config;
 
 import com.google.common.base.CaseFormat;
 import gifterz.textme.domain.oauth.util.OauthServerTypeConverter;
-import gifterz.textme.domain.security.jwt.JwtAuthArgumentResolver;
+import gifterz.textme.global.interceptor.LoggingInterceptor;
+import gifterz.textme.global.security.jwt.JwtAuthArgumentResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

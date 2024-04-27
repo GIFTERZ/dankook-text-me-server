@@ -1,4 +1,4 @@
-package gifterz.textme.domain.security.jwt;
+package gifterz.textme.global.security.jwt;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

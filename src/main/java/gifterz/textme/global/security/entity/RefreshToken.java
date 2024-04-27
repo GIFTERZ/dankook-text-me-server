@@ -1,4 +1,4 @@
-package gifterz.textme.domain.security.entity;
+package gifterz.textme.global.security.entity;
 
 import gifterz.textme.domain.entity.BaseEntity;
 import gifterz.textme.domain.entity.StatusType;

@@ -1,8 +1,8 @@
-package gifterz.textme.domain.security;
+package gifterz.textme.global.config;
 
-import gifterz.textme.domain.security.jwt.AuthEntryPointJwt;
-import gifterz.textme.domain.security.jwt.AuthTokenFilter;
-import gifterz.textme.domain.security.service.UserDetailsServiceImpl;
+import gifterz.textme.global.auth.role.UserRole;
+import gifterz.textme.global.security.jwt.AuthEntryPointJwt;
+import gifterz.textme.global.security.jwt.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

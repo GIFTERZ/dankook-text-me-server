@@ -1,8 +1,8 @@
-package gifterz.textme.domain.security.service;
+package gifterz.textme.global.security.service;
 
-import gifterz.textme.domain.security.entity.RefreshToken;
-import gifterz.textme.domain.security.jwt.JwtUtils;
-import gifterz.textme.domain.security.repository.RefreshTokenRepository;
+import gifterz.textme.global.security.entity.RefreshToken;
+import gifterz.textme.global.security.jwt.JwtUtils;
+import gifterz.textme.global.security.repository.RefreshTokenRepository;
 import gifterz.textme.domain.user.dto.response.TokenRefreshResponse;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.exception.TokenRefreshException;

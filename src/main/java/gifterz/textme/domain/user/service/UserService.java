@@ -1,11 +1,12 @@
 package gifterz.textme.domain.user.service;
 
 import gifterz.textme.domain.oauth.entity.AuthType;
-import gifterz.textme.domain.security.WebSecurityConfig;
-import gifterz.textme.domain.security.entity.RefreshToken;
-import gifterz.textme.domain.security.jwt.JwtUtils;
-import gifterz.textme.domain.security.service.AesUtils;
-import gifterz.textme.domain.security.service.RefreshTokenService;
+import gifterz.textme.domain.user.exception.InvalidPasswordException;
+import gifterz.textme.global.config.WebSecurityConfig;
+import gifterz.textme.global.security.entity.RefreshToken;
+import gifterz.textme.global.security.jwt.JwtUtils;
+import gifterz.textme.global.security.service.AesUtils;
+import gifterz.textme.global.security.service.RefreshTokenService;
 import gifterz.textme.domain.user.dto.request.LoginRequest;
 import gifterz.textme.domain.user.dto.request.SignUpRequest;
 import gifterz.textme.domain.user.dto.response.LoginResponse;
