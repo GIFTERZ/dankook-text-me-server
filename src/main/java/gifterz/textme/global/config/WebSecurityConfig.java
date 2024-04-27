@@ -31,6 +31,9 @@ public class WebSecurityConfig {
             "/api-docs/**", "/error/**"
     };
 
+    private static final String[] ADMIN_URI = {
+            "/admin/**"
+    };
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
@@ -58,6 +61,7 @@ public class WebSecurityConfig {
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+                        .requestMatchers(ADMIN_URI).hasAuthority(UserRole.ROLE_ADMIN)
     }
 
 }
