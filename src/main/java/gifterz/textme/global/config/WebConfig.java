@@ -16,6 +16,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedMethods("GET", "POST", "PATCH")
                 .allowedOrigins("http://localhost:8080", "http://localhost:3000",
-                        "http://192.168.0.82:3000", "https://next-app-dot-encoded-mark-411805.du.r.appspot.com/")
+                        "http://192.168.0.82:3000", "https://2023-text-me-epc6.vercel.app")
                 .allowCredentials(true);
     }
 
