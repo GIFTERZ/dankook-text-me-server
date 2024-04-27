@@ -19,11 +19,6 @@ import gifterz.textme.domain.user.repository.MemberRepository;
 import gifterz.textme.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +33,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
     private final WebSecurityConfig webSecurityConfig;
-    private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AesUtils aesUtils;
 
