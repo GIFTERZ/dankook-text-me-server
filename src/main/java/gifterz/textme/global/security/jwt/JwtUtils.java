@@ -24,8 +24,15 @@ public class JwtUtils {
         return generateTokenFromSubject(email, jwtExpirationMs);
     }
 
-    private String generateTokenFromSubject(String email, Long expirationMs) {
-        return Jwts.builder().setSubject(email).setIssuedAt(new Date())
+    private String generateToken(User user, Long expirationMs) {
+        Claims claims = Jwts.claims();
+        claims.put("userId", user.getId());
+        claims.put("email", user.getEmail());
+        claims.put("role", user.getUserRole());
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + expirationMs))
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
