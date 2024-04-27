@@ -81,6 +81,12 @@ public class UserService {
                 refreshToken.getRefreshToken(), refreshToken.getCreatedAt());
     }
 
+    private void checkPassword(String password, Member member) {
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new InvalidPasswordException("Invalid Password");
+        }
+    }
+
     public UserResponse findUserInfo(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         String encryptedUserId = encryptUserId(user.getId());
