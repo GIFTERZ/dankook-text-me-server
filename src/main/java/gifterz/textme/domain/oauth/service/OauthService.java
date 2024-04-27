@@ -57,8 +57,7 @@ public class OauthService {
             oauthMemberRepository.save(oauthMember);
         }
         User user = oauthMember.getUser();
-        String email = user.getEmail();
-        String accessToken = jwtUtils.generateAccessToken(email);
+        String accessToken = jwtUtils.generateAccessToken(user);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
         String encryptedUserId = encryptUserId(user.getId());
         return new LoginResponse(encryptedUserId, user.getEmail(), user.getName(), user.getGender(), accessToken,

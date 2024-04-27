@@ -22,6 +22,7 @@ public class JwtUtils {
 
     public String generateAccessToken(String email) {
         return generateTokenFromSubject(email, jwtExpirationMs);
+    public String generateAccessToken(User user) {
     }
 
     private String generateToken(User user, Long expirationMs) {
@@ -55,6 +56,15 @@ public class JwtUtils {
         }
 
         return false;
+    }
+
+    public JwtAuthentication getAuthentication(String authToken) {
+        Claims claims = parseClaims(authToken);
+        Long userId = claims.get("userId", Long.class);
+        String email = claims.get("email", String.class);
+        String userRole = claims.get("role", String.class);
+        return new JwtAuthentication(userId, email, UserRole.valueOf(userRole));
+
     }
 
     public Long getUserId(String token) {

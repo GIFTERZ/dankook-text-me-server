@@ -52,7 +52,7 @@ public class RefreshTokenService {
         refreshToken.updateRefreshToken(newRefreshToken, expiryDate);
         User user = refreshToken.getUser();
         String email = user.getEmail();
-        String newToken = jwtUtils.generateAccessToken(email);
+        String newToken = jwtUtils.generateAccessToken(user);
         return new TokenRefreshResponse(newToken, refreshToken.getRefreshToken(), refreshToken.getCreatedAt());
     }
 
