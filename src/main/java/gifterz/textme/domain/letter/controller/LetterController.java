@@ -4,7 +4,6 @@ import gifterz.textme.domain.letter.dto.request.*;
 import gifterz.textme.domain.letter.dto.response.AllLetterResponse;
 import gifterz.textme.domain.letter.dto.response.LetterResponse;
 import gifterz.textme.domain.letter.service.LetterService;
-import gifterz.textme.domain.security.jwt.JwtAuth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
