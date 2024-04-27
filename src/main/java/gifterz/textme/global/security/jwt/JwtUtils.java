@@ -1,6 +1,7 @@
 package gifterz.textme.global.security.jwt;
 
 import gifterz.textme.domain.user.entity.User;
+import gifterz.textme.global.auth.role.UserRole;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
