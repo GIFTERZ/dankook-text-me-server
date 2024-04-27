@@ -41,8 +41,9 @@ public class UserController {
     }
 
     @DeleteMapping("/logout")
-    public void logout(@JwtAuth String email) {
-        fcmService.deleteToken(email);
+    @UserAuth
+    public void logout(JwtAuthentication auth) {
+        fcmService.deleteToken(auth.getEmail());
     }
 
     @PostMapping("/token/refresh")
@@ -52,14 +53,16 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<UserResponse> getUserInfo(@JwtAuth String email) {
-        UserResponse userResponse = userService.findUserInfo(email);
+    @UserAuth
+    public ResponseEntity<UserResponse> getUserInfo(JwtAuthentication auth) {
+        UserResponse userResponse = userService.findUserInfo(auth.getEmail());
         return ResponseEntity.ok().body(userResponse);
     }
 
     @PatchMapping
-    public ResponseEntity<UserResponse> updateUserName(@JwtAuth String email, @RequestParam final String name) {
-        UserResponse userResponse = userService.updateUserName(email, name);
+    @UserAuth
+    public ResponseEntity<UserResponse> updateUserName(JwtAuthentication auth, @RequestParam final String name) {
+        UserResponse userResponse = userService.updateUserName(auth.getEmail(), name);
         return ResponseEntity.ok().body(userResponse);
     }
 
