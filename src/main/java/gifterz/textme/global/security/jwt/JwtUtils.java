@@ -57,9 +57,18 @@ public class JwtUtils {
         return false;
     }
 
-    public String extractEmail(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret)
-                .parseClaimsJws(token).getBody().getSubject();
+    public Long getUserId(String token) {
+        return parseClaims(token).get("userId", Long.class);
+    }
+
+    public String getEmail(String token) {
+        return parseClaims(token).get("email", String.class);
+    }
+
+    public String getUserRole(String token) {
+        return parseClaims(token).get("role", String.class);
+    }
+
     public Claims parseClaims(String token) {
         try {
             return Jwts.parser().setSigningKey(jwtSecret)
