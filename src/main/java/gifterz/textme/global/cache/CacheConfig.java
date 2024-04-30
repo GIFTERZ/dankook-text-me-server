@@ -30,6 +30,13 @@ import java.util.Map.Entry;
 @EnableCaching
 @RequiredArgsConstructor
 public class CacheConfig {
+    @Bean
+    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+        return RedisCacheManager.RedisCacheManagerBuilder
+                .fromConnectionFactory(redisConnectionFactory)
+                .cacheDefaults(redisCacheDefaultConfiguration())
+                .build();
+    }
 
     private final CacheProperties cacheProperties;
 
@@ -42,6 +49,13 @@ public class CacheConfig {
     @Bean(name = "redisCacheConnectionFactory")
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(redisHost, redisPort);
+    private RedisCacheConfiguration redisCacheDefaultConfiguration() {
+        return RedisCacheConfiguration
+                .defaultCacheConfig()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper())));
     }
 
     private ObjectMapper objectMapper() {
