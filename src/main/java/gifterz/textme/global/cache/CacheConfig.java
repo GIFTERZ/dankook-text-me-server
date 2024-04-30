@@ -12,6 +12,7 @@ import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -26,15 +27,16 @@ import java.util.function.Function;
 @Configuration
 @EnableCaching
 public class CacheConfig {
-    @Bean
-    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+    @Bean(name = "redisCacheManager")
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         return RedisCacheManager.RedisCacheManagerBuilder
                 .fromConnectionFactory(redisConnectionFactory)
                 .cacheDefaults(redisCacheDefaultConfiguration())
                 .build();
     }
 
-    @Bean
+    @Bean(name = "caffeineCacheManager")
+    @Primary
     public CacheManager caffeineCacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
 
