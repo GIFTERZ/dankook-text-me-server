@@ -4,6 +4,8 @@ import gifterz.textme.domain.card.entity.Card;
 import gifterz.textme.domain.card.repository.CardRepository;
 import gifterz.textme.s3Proxy.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,7 @@ public class CardService {
     private final S3Service s3Service;
 
     @Transactional
+    @CacheEvict(cacheNames = "card", allEntries = true, cacheManager = "caffeineCacheManager")
     public String uploadCard(MultipartFile multipartFile) throws IOException {
         String uploadUrl = s3Service.upload(multipartFile);
         Card card = Card.from(uploadUrl);
@@ -27,6 +30,7 @@ public class CardService {
         return card.getImageUrl();
     }
 
+    @Cacheable(cacheNames = "card", cacheManager = "caffeineCacheManager")
     public List<String> findCards() {
         return cardRepository.findAll()
                 .stream()
