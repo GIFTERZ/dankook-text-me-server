@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 public class SenderInfo {
     private final String senderName;
-    private String imageUrl;
     private String phoneNumber;
     private String email;
+    private String contactInfo;
 
     public static SenderInfo from(String senderName) {
         return SenderInfo.builder()
