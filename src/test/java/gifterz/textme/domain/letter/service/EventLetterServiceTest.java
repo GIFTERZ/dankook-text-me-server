@@ -99,4 +99,21 @@ class EventLetterServiceTest {
         );
     }
 
+    @Test
+    void getEventLetterWithLetterViewCountOver3() {
+        // Given
+        EventLetter eventLetter = EventLetter.of(user, "senderName", "contents", "imageUrl", "contactInfo");
+        eventLetter.increaseViewCount();
+        eventLetter.increaseViewCount();
+        eventLetter.increaseViewCount();
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        when(eventLetterLogRepository.countByUser(any())).thenReturn(0L);
+        when(eventLetterRepository.findById(any())).thenReturn(Optional.of(eventLetter));
+
+        // When, Then
+        assertThrows(IllegalArgumentException.class,
+                () -> eventLetterService.findLetter(user.getId(), eventLetter.getId()),
+                "이미 3번 조회된 편지입니다.");
+    }
+
 }
