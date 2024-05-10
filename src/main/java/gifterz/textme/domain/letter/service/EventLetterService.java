@@ -21,6 +21,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,6 +35,7 @@ public class EventLetterService {
     private final EventLetterRepository eventLetterRepository;
     private final EventLetterLogRepository eventLetterLogRepository;
     private final UserRepository userRepository;
+    public static ConcurrentHashMap<Long, HashSet<Long>> viewMap = new ConcurrentHashMap<>();
 
     @Transactional
     public void sendLetter(Long senderId, SenderInfo senderInfo, Target letterInfo) {
@@ -51,6 +53,10 @@ public class EventLetterService {
         EventLetter eventLetter = getEventLetterByIdWithOptimistic(letterId).orElseThrow(LetterNotFoundException::new);
         checkLetterViewCount(eventLetter.getViewCount());
         eventLetter.increaseViewCount();
+        checkAlreadyViewedUser(userId, letterId);
+        HashSet<Long> userViewedSet = viewMap.getOrDefault(1L, new HashSet<>());
+        userViewedSet.add(1L);
+        viewMap.put(1L, userViewedSet);
         EventLetterLog eventLetterLog = EventLetterLog.of(user, eventLetter);
         eventLetterLogRepository.save(eventLetterLog);
         return EventLetterResponse.of(eventLetter);
@@ -74,8 +80,6 @@ public class EventLetterService {
     }
 
     private void checkUserViewCount(long viewCount) {
-        if (viewCount >= 3) {
-            throw new IllegalArgumentException("이미 3번 조회한 사용자입니다.");
         if (viewCount >= MAX_VIEW_COUNT) {
             throw new ExceedUserViewCountException();
         }
