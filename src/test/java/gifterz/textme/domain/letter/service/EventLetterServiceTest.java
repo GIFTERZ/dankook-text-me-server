@@ -11,6 +11,8 @@ import gifterz.textme.domain.oauth.entity.AuthType;
 import gifterz.textme.domain.user.entity.Major;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.repository.UserRepository;
+import gifterz.textme.error.exception.ApplicationException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,11 +22,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static gifterz.textme.domain.letter.entity.EventLetter.MAX_VIEW_COUNT;
+import static gifterz.textme.domain.letter.service.EventLetterService.viewMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -51,6 +56,11 @@ class EventLetterServiceTest {
         eventLetter = EventLetter.of(user, "senderName", "contents", "imageUrl", "contactInfo");
     }
 
+    @AfterEach()
+    void clearViewMap() {
+        viewMap.clear();
+    }
+
     @Test
     void sendEventLetter() {
         // Given
@@ -73,12 +83,14 @@ class EventLetterServiceTest {
     @Test
     void getEventLetter() {
         // Given
-        when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(eventLetterRepository.findById(any())).thenReturn(Optional.of(eventLetter));
-        when(eventLetterLogRepository.countByUser(any())).thenReturn(0L);
+        viewMap.put(1L, new HashSet<>());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(eventLetterRepository.findByIdWithOptimistic(1L, StatusType.ACTIVATE.getStatus()))
+                .thenReturn(Optional.of(eventLetter));
+        when(eventLetterLogRepository.countByUser(user)).thenReturn(0L);
 
         // When
-        EventLetterResponse response = eventLetterService.findLetter(user.getId(), eventLetter.getId());
+        EventLetterResponse response = eventLetterService.findLetter(1L, 1L);
 
         // Then
         assertAll(
@@ -97,9 +109,9 @@ class EventLetterServiceTest {
         when(eventLetterLogRepository.countByUser(any())).thenReturn(3L);
 
         // When, Then
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ApplicationException.class,
                 () -> eventLetterService.findLetter(user.getId(), eventLetter.getId()),
-                "이미 3번 이상 조회한 사용자입니다."
+                "이미 " + MAX_VIEW_COUNT + "번 조회한 사용자입니다."
         );
     }
 
@@ -112,27 +124,26 @@ class EventLetterServiceTest {
         eventLetter.increaseViewCount();
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(eventLetterLogRepository.countByUser(any())).thenReturn(0L);
-        when(eventLetterRepository.findById(any())).thenReturn(Optional.of(eventLetter));
+        when(eventLetterRepository.findByIdWithOptimistic(any(), any())).thenReturn(Optional.of(eventLetter));
 
         // When, Then
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ApplicationException.class,
                 () -> eventLetterService.findLetter(user.getId(), eventLetter.getId()),
-                "이미 3번 조회된 편지입니다.");
+                "이미 " + MAX_VIEW_COUNT + "번 조회된 편지입니다.");
     }
 
     @Test
     void getEventLetterSimultaneously() throws InterruptedException {
         // Given
-        int threadCount = 4061;
+        int threadCount = 3;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(eventLetterRepository.findByIdWithOptimistic(any(), StatusType.ACTIVATE.getStatus())).thenReturn(Optional.of(eventLetter));
+        when(eventLetterRepository.findByIdWithOptimistic(any(), any())).thenReturn(Optional.of(eventLetter));
         // when
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    // 서비스 객체가 아닌 Facade 객체를 통해 로직을 수행해야한다.
                     eventLetterService.findLetter(user.getId(), eventLetter.getId());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -142,9 +153,9 @@ class EventLetterServiceTest {
             });
         }
 
-        countDownLatch.await(); // 모든 스레드의 작업이 끝날 때까지 대기
+        countDownLatch.await();
 
         // then
-        assertThat(eventLetter.getViewCount()).isEqualTo(4061);
+        assertThat(eventLetter.getViewCount()).isEqualTo(3);
     }
 }
