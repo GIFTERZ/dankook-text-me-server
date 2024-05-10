@@ -2,6 +2,7 @@ package gifterz.textme.domain.letter.service;
 
 import gifterz.textme.domain.letter.dto.request.SenderInfo;
 import gifterz.textme.domain.letter.dto.request.Target;
+import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
 import gifterz.textme.domain.letter.entity.EventLetter;
 import gifterz.textme.domain.letter.repository.EventLetterLogRepository;
 import gifterz.textme.domain.letter.repository.EventLetterRepository;
@@ -20,6 +21,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -62,6 +64,26 @@ class EventLetterServiceTest {
         verify(eventLetterRepository, times(1)).save(eventLetterArgumentCaptor.capture());
         EventLetter savedEventLetter = eventLetterArgumentCaptor.getValue();
         assertEquals(expectedEventLetter, savedEventLetter);
+    }
+
+    @Test
+    void getEventLetter() {
+        // Given
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        when(eventLetterRepository.findById(any())).thenReturn(Optional.of(eventLetter));
+        when(eventLetterLogRepository.countByUser(any())).thenReturn(0L);
+
+        // When
+        EventLetterResponse response = eventLetterService.findLetter(user.getId(), eventLetter.getId());
+
+        // Then
+        assertAll(
+                () -> assertThat(response.id()).isEqualTo(eventLetter.getId()),
+                () -> assertThat(response.senderName()).isEqualTo(eventLetter.getSenderName()),
+                () -> assertThat(response.contents()).isEqualTo(eventLetter.getContents()),
+                () -> assertThat(response.imageUrl()).isEqualTo(eventLetter.getImageUrl()),
+                () -> assertThat(response.contactInfo()).isEqualTo(eventLetter.getContactInfo())
+        );
     }
 
 }
