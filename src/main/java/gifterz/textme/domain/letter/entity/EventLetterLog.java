@@ -1,6 +1,7 @@
 package gifterz.textme.domain.letter.entity;
 
 import gifterz.textme.domain.entity.BaseEntity;
+import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -28,6 +29,7 @@ public class EventLetterLog extends BaseEntity {
     }
 
     private EventLetterLog(User user, EventLetter eventLetter) {
+        super(StatusType.ACTIVATE.getStatus());
         this.user = user;
         this.eventLetter = eventLetter;
     }
