@@ -1,6 +1,7 @@
 package gifterz.textme.domain.letter.entity;
 
 import gifterz.textme.domain.entity.BaseEntity;
+import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -41,6 +42,7 @@ public class EventLetter extends BaseEntity {
 
     private EventLetter(User user, String senderName, String contents,
                         String imageUrl, String contactInfo, Integer viewCount) {
+        super(StatusType.ACTIVATE.getStatus());
         this.user = user;
         this.senderName = senderName;
         this.contents = contents;
