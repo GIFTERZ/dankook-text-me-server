@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,6 +51,10 @@ public class EventLetter extends BaseEntity {
         this.imageUrl = imageUrl;
         this.contactInfo = contactInfo;
         this.viewCount = viewCount;
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
     }
 
     @Override
