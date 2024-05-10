@@ -39,6 +39,9 @@ public class EventLetter extends BaseEntity {
 
     @Version
     private Long version;
+
+    public final static int MAX_VIEW_COUNT = 3;
+
     public static EventLetter of(User user, String senderName, String contents,
                                  String imageUrl, String contactInfo) {
         return new EventLetter(user, senderName, contents, imageUrl, contactInfo, 0);
