@@ -86,4 +86,17 @@ class EventLetterServiceTest {
         );
     }
 
+    @Test
+    void getEventLetterWithUserViewCountOver3() {
+        // Given
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        when(eventLetterLogRepository.countByUser(any())).thenReturn(3L);
+
+        // When, Then
+        assertThrows(IllegalArgumentException.class,
+                () -> eventLetterService.findLetter(user.getId(), eventLetter.getId()),
+                "이미 3번 이상 조회한 사용자입니다."
+        );
+    }
+
 }
