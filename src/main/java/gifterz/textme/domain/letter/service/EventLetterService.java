@@ -7,6 +7,8 @@ import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
 import gifterz.textme.domain.letter.entity.EventLetter;
 import gifterz.textme.domain.letter.entity.EventLetterLog;
 import gifterz.textme.domain.letter.exception.AlreadyViewedUserException;
+import gifterz.textme.domain.letter.exception.ExceedLetterViewCountException;
+import gifterz.textme.domain.letter.exception.ExceedUserViewCountException;
 import gifterz.textme.domain.letter.exception.LetterNotFoundException;
 import gifterz.textme.domain.letter.repository.EventLetterLogRepository;
 import gifterz.textme.domain.letter.repository.EventLetterRepository;
