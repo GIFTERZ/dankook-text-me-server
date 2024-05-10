@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static gifterz.textme.domain.letter.entity.EventLetter.MAX_VIEW_COUNT;
 
 @Service
@@ -74,12 +76,12 @@ public class EventLetterService {
     private void checkUserViewCount(long viewCount) {
         if (viewCount >= 3) {
             throw new IllegalArgumentException("이미 3번 조회한 사용자입니다.");
+        if (viewCount >= MAX_VIEW_COUNT) {
+            throw new ExceedUserViewCountException();
         }
     }
 
     private void checkLetterViewCount(long viewCount) {
-        if (viewCount >= 3) {
-            throw new IllegalArgumentException("이미 3번 조회된 편지입니다.");
         if (viewCount >= MAX_VIEW_COUNT) {
             throw new ExceedLetterViewCountException();
         }
