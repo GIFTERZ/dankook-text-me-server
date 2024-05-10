@@ -6,6 +6,7 @@ import gifterz.textme.domain.letter.dto.request.Target;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
 import gifterz.textme.domain.letter.entity.EventLetter;
 import gifterz.textme.domain.letter.entity.EventLetterLog;
+import gifterz.textme.domain.letter.exception.AlreadyViewedUserException;
 import gifterz.textme.domain.letter.exception.LetterNotFoundException;
 import gifterz.textme.domain.letter.repository.EventLetterLogRepository;
 import gifterz.textme.domain.letter.repository.EventLetterRepository;
@@ -48,6 +49,12 @@ public class EventLetterService {
         EventLetterLog eventLetterLog = EventLetterLog.of(user, eventLetter);
         eventLetterLogRepository.save(eventLetterLog);
         return EventLetterResponse.of(eventLetter);
+    }
+
+    private void checkAlreadyViewedUser(Long userId, Long letterId) {
+        if (viewMap.getOrDefault(letterId, new HashSet<>()).contains(userId)) {
+            throw new AlreadyViewedUserException();
+        }
     }
 
     private Optional<EventLetter> getEventLetterByIdWithOptimistic(Long letterId) {
