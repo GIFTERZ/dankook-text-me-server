@@ -37,6 +37,8 @@ public class EventLetter extends BaseEntity {
 
     private Integer viewCount;
 
+    @Version
+    private Long version;
     public static EventLetter of(User user, String senderName, String contents,
                                  String imageUrl, String contactInfo) {
         return new EventLetter(user, senderName, contents, imageUrl, contactInfo, 0);
@@ -55,7 +57,7 @@ public class EventLetter extends BaseEntity {
 
     public void increaseViewCount() {
         this.viewCount++;
-        if (this.viewCount >= 3) {
+        if (this.viewCount >= MAX_VIEW_COUNT) {
             this.deactivate();
         }
     }
