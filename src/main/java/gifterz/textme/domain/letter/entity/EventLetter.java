@@ -50,4 +50,24 @@ public class EventLetter extends BaseEntity {
         this.contactInfo = contactInfo;
         this.viewCount = viewCount;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EventLetter that = (EventLetter) o;
+
+        return Objects.equals(id, that.id) &&
+                Objects.equals(user, that.user) &&
+                Objects.equals(senderName, that.senderName) &&
+                Objects.equals(contents, that.contents) &&
+                Objects.equals(imageUrl, that.imageUrl) &&
+                Objects.equals(contactInfo, that.contactInfo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, senderName, contents, imageUrl, contactInfo);
+    }
 }
