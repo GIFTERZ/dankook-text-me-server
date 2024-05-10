@@ -55,6 +55,13 @@ public class EventLetter extends BaseEntity {
 
     public void increaseViewCount() {
         this.viewCount++;
+        if (this.viewCount >= 3) {
+            this.deactivate();
+        }
+    }
+
+    public void deactivate() {
+        this.status = StatusType.DEACTIVATE.getStatus();
     }
 
     @Override
