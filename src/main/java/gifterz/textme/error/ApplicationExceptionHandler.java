@@ -25,9 +25,10 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler
     protected ResponseEntity<ErrorResponse> handleApplicationException(final ApplicationException err) {
-        log.error("handleEntityNotFoundException", err);
+        log.error("handleApplicationException", err);
         final ErrorCode errorCode = err.getErrorCode();
         final ErrorResponse response = ErrorResponse.from(errorCode);
+        response.changeMessage(err.getMessage());
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getHttpStatus()));
     }
 
