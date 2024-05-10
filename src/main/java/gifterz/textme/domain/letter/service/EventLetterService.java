@@ -1,5 +1,6 @@
 package gifterz.textme.domain.letter.service;
 
+import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.letter.dto.request.SenderInfo;
 import gifterz.textme.domain.letter.dto.request.Target;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
@@ -52,7 +53,7 @@ public class EventLetterService {
     private Optional<EventLetter> getEventLetterByIdWithOptimistic(Long letterId) {
         while (true) {
             try {
-                return eventLetterRepository.findByIdWithOptimistic(letterId);
+                return eventLetterRepository.findByIdWithOptimistic(letterId, StatusType.ACTIVATE.getStatus());
             } catch (ObjectOptimisticLockingFailureException e) {
                 log.info("현재 쓰레드: {}, letterId: {}", Thread.currentThread().getId(), letterId);
             }

@@ -1,5 +1,6 @@
 package gifterz.textme.domain.letter.service;
 
+import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.letter.dto.request.SenderInfo;
 import gifterz.textme.domain.letter.dto.request.Target;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
@@ -126,7 +127,7 @@ class EventLetterServiceTest {
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(eventLetterRepository.findByIdWithOptimistic(any())).thenReturn(Optional.of(eventLetter));
+        when(eventLetterRepository.findByIdWithOptimistic(any(), StatusType.ACTIVATE.getStatus())).thenReturn(Optional.of(eventLetter));
         // when
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {

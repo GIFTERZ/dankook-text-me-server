@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface EventLetterRepository extends JpaRepository<EventLetter, Long> {
 
     @Lock(value = LockModeType.OPTIMISTIC)
-    Optional<EventLetter> findByIdWithOptimistic(Long id);
+    Optional<EventLetter> findByIdWithOptimistic(Long id, String status);
 }
