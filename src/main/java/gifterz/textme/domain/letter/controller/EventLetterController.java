@@ -1,6 +1,7 @@
 package gifterz.textme.domain.letter.controller;
 
 import gifterz.textme.domain.letter.dto.request.EventLetterRequest;
+import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
 import gifterz.textme.domain.letter.service.EventLetterService;
 import gifterz.textme.global.auth.role.UserAuth;
 import gifterz.textme.global.security.jwt.JwtAuthentication;
@@ -21,6 +22,13 @@ public class EventLetterController {
     public ResponseEntity<Void> sendLetter(JwtAuthentication auth, @RequestBody @Valid EventLetterRequest request) {
         eventLetterService.sendLetter(auth.getUserId(), request.toSenderInfo(), request.toTarget());
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/{id}")
+    @UserAuth
+    public ResponseEntity<EventLetterResponse> findLetter(JwtAuthentication auth, @PathVariable("id") final Long letterId) {
+        EventLetterResponse response = eventLetterService.findLetter(auth.getUserId(), letterId);
+        return ResponseEntity.ok().body(response);
     }
 
 }
