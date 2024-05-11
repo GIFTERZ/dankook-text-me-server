@@ -6,6 +6,14 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: HikariCP
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 3000
+      connection-timeout: 3000
+      validation-timeout: 3000
+      max-lifetime: 180000
   redis:
     cache:
       host: ${REDIS_HOST}
@@ -77,7 +85,16 @@ oauth:
     api:
       base_url: ${DKU_BASE_URL}
       authorize: ${DKU_AUTHORIZE_API}
+
+batch:
+  view-count:
+    delay: 10000
+
+
 logging:
   level:
     org.springframework.core:
       LocalVariableTableParameterNameDiscoverer: error
+    org.hibernate.SQL: info
+    root: info
+    com.zaxxer.hikari.pool.HikariPool: debug
