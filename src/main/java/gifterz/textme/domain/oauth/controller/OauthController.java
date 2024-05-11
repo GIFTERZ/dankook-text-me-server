@@ -9,9 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.view.RedirectView;
 
-import java.io.IOException;
 
 @RequiredArgsConstructor
 @RequestMapping("/oauth")
@@ -21,14 +20,13 @@ public class OauthController {
     private final OauthService oauthService;
 
     @GetMapping("/{authType}")
-    public void redirectAuthCodeRequestUrl(
+    public RedirectView redirectAuthCodeRequestUrl(
             @PathVariable AuthType authType,
             @RequestParam(required = false) String codeChallenge,
-            @RequestParam(required = false) String codeChallengeMethod,
-            HttpServletResponse response) throws IOException {
+            @RequestParam(required = false) String codeChallengeMethod) {
         AuthCodeRequest authCodeRequest = AuthCodeRequest.of(authType, codeChallenge, codeChallengeMethod);
         String redirectUrl = oauthService.getAuthCodeRequestUrl(authCodeRequest);
-        response.sendRedirect(redirectUrl);
+        return new RedirectView(redirectUrl);
     }
 
     @PostMapping("/login/{authType}")
