@@ -43,19 +43,19 @@ public class OauthService {
             return loginWithPkce(authType, authCode, codeVerifier);
         }
         OauthMember oauthMember = oauthMemberClientMapper.fetch(authType, authCode);
+        oauthMemberRepository.findByUser(oauthMember.getUser()).
+                orElseGet(() -> oauthMemberRepository.save(oauthMember));
         return getLoginResponse(oauthMember);
     }
 
     private LoginResponse loginWithPkce(AuthType authType, String authCode, String codeVerifier) {
         OauthMember oauthMember = oauthMemberClientMapper.fetch(authType, authCode, codeVerifier);
+        oauthMemberRepository.findByUser(oauthMember.getUser()).
+                orElseGet(() -> oauthMemberRepository.save(oauthMember));
         return getLoginResponse(oauthMember);
     }
 
     private LoginResponse getLoginResponse(OauthMember oauthMember) {
-        OauthId oauthId = oauthMember.getOauthId();
-        if (!oauthMemberRepository.existsByOauthId(oauthId)) {
-            oauthMemberRepository.save(oauthMember);
-        }
         User user = oauthMember.getUser();
         String accessToken = jwtUtils.generateAccessToken(user);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
