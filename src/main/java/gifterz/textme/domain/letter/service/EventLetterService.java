@@ -57,7 +57,7 @@ public class EventLetterService {
                         .id(eventLetter.getId())
                         .imageUrl(eventLetter.getImageUrl())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private String convertGender(String gender) {
