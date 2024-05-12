@@ -49,11 +49,7 @@ public class EventLetterService {
     }
 
     public List<AllEventLetterResponse> getLettersByGender(String gender) {
-        if (gender.equals("men")) {
-            gender = "남자";
-        } else if (gender.equals("women")) {
-            gender = "여자";
-        }
+        gender = convertGender(gender);
 
         List<EventLetter> eventLettersByGender = eventLetterRepository.findAllByUserGenderAndStatus(gender, StatusType.ACTIVATE.getStatus());
         return eventLettersByGender.stream()
@@ -63,7 +59,16 @@ public class EventLetterService {
                         .build())
                 .collect(Collectors.toList());
     }
-  
+
+    private String convertGender(String gender) {
+        if (gender.equals("men")) {
+            gender = "남자";
+        } else if (gender.equals("women")) {
+            gender = "여자";
+        }
+        return gender;
+    }
+
     @Transactional
     public synchronized EventLetterResponse findLetter(Long userId, Long letterId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
