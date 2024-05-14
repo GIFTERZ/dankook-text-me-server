@@ -13,10 +13,10 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface EventLetterRepository extends JpaRepository<EventLetter, Long> {
 
-    List<EventLetter> findAllByUserGenderAndStatus(String gender, String status);
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(value = LockModeType.OPTIMISTIC)
     @Query("select e from EventLetter e where e.id = :id and e.status = :status")
-    Optional<EventLetter> findByIdWithPessimistic(Long id, String status);
+    Optional<EventLetter> findByIdWithOptimistic(Long id, String status);
+
+    List<EventLetter> findAllByUserGenderAndStatus(String gender, String status);
 
 }

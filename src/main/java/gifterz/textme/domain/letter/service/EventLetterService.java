@@ -1,5 +1,6 @@
 package gifterz.textme.domain.letter.service;
 
+import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.letter.dto.request.SenderInfo;
 import gifterz.textme.domain.letter.dto.request.Target;
 import gifterz.textme.domain.letter.dto.response.AllEventLetterResponse;
@@ -17,14 +18,16 @@ import gifterz.textme.domain.user.exception.UserNotFoundException;
 import gifterz.textme.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static gifterz.textme.domain.entity.StatusType.ACTIVATE;
 import static gifterz.textme.domain.letter.entity.EventLetter.MAX_VIEW_COUNT;
 
 @Service
@@ -48,9 +51,7 @@ public class EventLetterService {
     public List<AllEventLetterResponse> getLettersByGender(String gender) {
         gender = convertGender(gender);
 
-        List<EventLetter> eventLettersByGender = eventLetterRepository
-                .findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
-
+        List<EventLetter> eventLettersByGender = eventLetterRepository.findAllByUserGenderAndStatus(gender, StatusType.ACTIVATE.getStatus());
         return eventLettersByGender.stream()
                 .map(eventLetter -> AllEventLetterResponse.builder()
                         .id(eventLetter.getId())
@@ -69,21 +70,19 @@ public class EventLetterService {
     }
 
     @Transactional
-    public EventLetterResponse findLetter(Long userId, Long letterId) {
+    public synchronized EventLetterResponse findLetter(Long userId, Long letterId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        checkAlreadyViewedUser(userId, letterId);
-
         long userViewCount = eventLetterLogRepository.countByUser(user);
         checkUserViewCount(userViewCount);
-
-        EventLetter eventLetter = eventLetterRepository.
-                findByIdWithPessimistic(letterId, ACTIVATE.getStatus()).orElseThrow(LetterNotFoundException::new);
+        EventLetter eventLetter = getEventLetterByIdWithOptimistic(letterId).orElseThrow(LetterNotFoundException::new);
         checkLetterViewCount(eventLetter.getViewCount());
         eventLetter.increaseViewCount();
-
+        checkAlreadyViewedUser(userId, letterId);
+        HashSet<Long> userViewedSet = viewMap.getOrDefault(1L, new HashSet<>());
+        userViewedSet.add(1L);
+        viewMap.put(1L, userViewedSet);
         EventLetterLog eventLetterLog = EventLetterLog.of(user, eventLetter);
         eventLetterLogRepository.save(eventLetterLog);
-
         return EventLetterResponse.of(eventLetter);
     }
 
@@ -91,6 +90,17 @@ public class EventLetterService {
         if (viewMap.getOrDefault(letterId, new HashSet<>()).contains(userId)) {
             throw new AlreadyViewedUserException();
         }
+    }
+
+    private Optional<EventLetter> getEventLetterByIdWithOptimistic(Long letterId) {
+        while (true) {
+            try {
+                return eventLetterRepository.findByIdWithOptimistic(letterId, StatusType.ACTIVATE.getStatus());
+            } catch (ObjectOptimisticLockingFailureException e) {
+                log.info("현재 쓰레드: {}, letterId: {}", Thread.currentThread().getId(), letterId);
+            }
+        }
+
     }
 
     private void checkUserViewCount(long viewCount) {

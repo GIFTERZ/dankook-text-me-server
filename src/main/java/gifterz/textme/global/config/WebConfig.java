@@ -50,8 +50,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedMethods("GET", "POST", "PATCH")
                 .allowedOrigins("http://localhost:8080", "http://localhost:3000",
-                        "http://192.168.0.82:3000", "https://textme.gifterz.site:3000",
-                        "https://danvery.com:8080", "https://danvery.com:8082")
+                        "http://192.168.0.82:3000", "https://textme.gifterz.site")
                 .allowCredentials(true);
     }
 
