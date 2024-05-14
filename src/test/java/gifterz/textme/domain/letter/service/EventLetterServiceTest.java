@@ -85,7 +85,7 @@ class EventLetterServiceTest {
         // Given
         viewMap.put(1L, new HashSet<>());
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(eventLetterRepository.findByIdWithOptimistic(1L, StatusType.ACTIVATE.getStatus()))
+        when(eventLetterRepository.findByIdWithPessimistic(1L, StatusType.ACTIVATE.getStatus()))
                 .thenReturn(Optional.of(eventLetter));
         when(eventLetterLogRepository.countByUser(user)).thenReturn(0L);
 
@@ -124,7 +124,7 @@ class EventLetterServiceTest {
         eventLetter.increaseViewCount();
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(eventLetterLogRepository.countByUser(any())).thenReturn(0L);
-        when(eventLetterRepository.findByIdWithOptimistic(any(), any())).thenReturn(Optional.of(eventLetter));
+        when(eventLetterRepository.findByIdWithPessimistic(any(), any())).thenReturn(Optional.of(eventLetter));
 
         // When, Then
         assertThrows(ApplicationException.class,
@@ -135,12 +135,14 @@ class EventLetterServiceTest {
     @Test
     void getEventLetterSimultaneously() throws InterruptedException {
         // Given
-        int threadCount = 3;
+        int threadCount = 4000;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(eventLetterRepository.findByIdWithOptimistic(any(), any())).thenReturn(Optional.of(eventLetter));
+        when(eventLetterRepository.findByIdWithPessimistic(any(), any())).thenReturn(Optional.of(eventLetter));
         // when
+        long start = System.currentTimeMillis();
+
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
@@ -154,8 +156,9 @@ class EventLetterServiceTest {
         }
 
         countDownLatch.await();
-
+        long end = System.currentTimeMillis();
+        System.out.println("실행 시간: " + (end - start) + "ms");
         // then
-        assertThat(eventLetter.getViewCount()).isEqualTo(3);
+        assertThat(eventLetter.getViewCount()).isEqualTo(4000);
     }
 }
