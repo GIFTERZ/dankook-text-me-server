@@ -92,17 +92,6 @@ public class EventLetterService {
         }
     }
 
-    private Optional<EventLetter> getEventLetterByIdWithOptimistic(Long letterId) {
-        while (true) {
-            try {
-                return eventLetterRepository.findByIdWithOptimistic(letterId, StatusType.ACTIVATE.getStatus());
-            } catch (ObjectOptimisticLockingFailureException e) {
-                log.info("현재 쓰레드: {}, letterId: {}", Thread.currentThread().getId(), letterId);
-            }
-        }
-
-    }
-
     private void checkUserViewCount(long viewCount) {
         if (viewCount >= MAX_VIEW_COUNT) {
             throw new ExceedUserViewCountException();
