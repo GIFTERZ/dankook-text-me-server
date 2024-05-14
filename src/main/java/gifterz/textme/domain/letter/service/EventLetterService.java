@@ -70,19 +70,21 @@ public class EventLetterService {
     }
 
     @Transactional
-    public synchronized EventLetterResponse findLetter(Long userId, Long letterId) {
+    public EventLetterResponse findLetter(Long userId, Long letterId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        checkAlreadyViewedUser(userId, letterId);
+
         long userViewCount = eventLetterLogRepository.countByUser(user);
         checkUserViewCount(userViewCount);
-        EventLetter eventLetter = getEventLetterByIdWithOptimistic(letterId).orElseThrow(LetterNotFoundException::new);
+
+        EventLetter eventLetter = eventLetterRepository.
+                findByIdWithPessimistic(letterId, ACTIVATE.getStatus()).orElseThrow(LetterNotFoundException::new);
         checkLetterViewCount(eventLetter.getViewCount());
         eventLetter.increaseViewCount();
-        checkAlreadyViewedUser(userId, letterId);
-        HashSet<Long> userViewedSet = viewMap.getOrDefault(1L, new HashSet<>());
-        userViewedSet.add(1L);
-        viewMap.put(1L, userViewedSet);
+
         EventLetterLog eventLetterLog = EventLetterLog.of(user, eventLetter);
         eventLetterLogRepository.save(eventLetterLog);
+
         return EventLetterResponse.of(eventLetter);
     }
 
