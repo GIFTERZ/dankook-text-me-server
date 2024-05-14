@@ -1,6 +1,5 @@
 package gifterz.textme.domain.letter.service;
 
-import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.letter.dto.request.SenderInfo;
 import gifterz.textme.domain.letter.dto.request.Target;
 import gifterz.textme.domain.letter.dto.response.AllEventLetterResponse;
@@ -18,16 +17,14 @@ import gifterz.textme.domain.user.exception.UserNotFoundException;
 import gifterz.textme.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static gifterz.textme.domain.entity.StatusType.ACTIVATE;
 import static gifterz.textme.domain.letter.entity.EventLetter.MAX_VIEW_COUNT;
 
 @Service
@@ -51,7 +48,9 @@ public class EventLetterService {
     public List<AllEventLetterResponse> getLettersByGender(String gender) {
         gender = convertGender(gender);
 
-        List<EventLetter> eventLettersByGender = eventLetterRepository.findAllByUserGenderAndStatus(gender, StatusType.ACTIVATE.getStatus());
+        List<EventLetter> eventLettersByGender = eventLetterRepository
+                .findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
+
         return eventLettersByGender.stream()
                 .map(eventLetter -> AllEventLetterResponse.builder()
                         .id(eventLetter.getId())
