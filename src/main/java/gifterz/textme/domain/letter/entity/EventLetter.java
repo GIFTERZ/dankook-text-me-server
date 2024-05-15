@@ -66,6 +66,10 @@ public class EventLetter extends BaseEntity {
         this.status = StatusType.DEACTIVATE.getStatus();
     }
 
+    public void pend() {
+        this.status = StatusType.PENDING.getStatus();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

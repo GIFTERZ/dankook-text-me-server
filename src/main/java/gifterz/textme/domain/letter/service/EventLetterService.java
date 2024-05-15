@@ -54,8 +54,7 @@ public class EventLetterService {
         return eventLettersByGender.stream()
                 .map(eventLetter -> AllEventLetterResponse.builder()
                         .id(eventLetter.getId())
-                        .imageUrl(eventLetter.getImageUrl())
-                        .build())
+                        .imageUrl(eventLetter.getImageUrl()).build())
                 .toList();
     }
 
@@ -76,8 +75,8 @@ public class EventLetterService {
         long userViewCount = eventLetterLogRepository.countByUser(user);
         checkUserViewCount(userViewCount);
 
-        EventLetter eventLetter = eventLetterRepository.
-                findByIdWithPessimistic(letterId, ACTIVATE.getStatus()).orElseThrow(LetterNotFoundException::new);
+        EventLetter eventLetter = eventLetterRepository
+                .findByIdWithPessimistic(letterId, ACTIVATE.getStatus()).orElseThrow(LetterNotFoundException::new);
         checkLetterViewCount(eventLetter.getViewCount());
         eventLetter.increaseViewCount();
 
@@ -103,5 +102,12 @@ public class EventLetterService {
         if (viewCount >= MAX_VIEW_COUNT) {
             throw new ExceedLetterViewCountException();
         }
+    }
+
+    @Transactional
+    public void reportLetter(Long eventLetterId) {
+        EventLetter eventLetter = eventLetterRepository.findById(eventLetterId).orElseThrow(LetterNotFoundException::new);
+
+        eventLetter.pend();
     }
 }

@@ -40,4 +40,11 @@ public class EventLetterController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PostMapping("/{letterId}/reports")
+    @UserAuth
+    public ResponseEntity<Void> reportLetter(JwtAuthentication auth, @PathVariable("letterId") final Long letterId) {
+        eventLetterService.reportLetter(letterId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
 }
