@@ -3,7 +3,8 @@ package gifterz.textme.domain.entity;
 public enum StatusType {
     ACTIVATE(0, "ACTIVATE"),
     DELETED(1, "DELETED"),
-    DEACTIVATE(2, "DEACTIVATE");
+    DEACTIVATE(2, "DEACTIVATE"),
+    PENDING(3, "PENDING");
 
     final int number;
     final String status;
