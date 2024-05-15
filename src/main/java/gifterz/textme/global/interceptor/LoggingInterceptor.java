@@ -28,8 +28,8 @@ public class LoggingInterceptor implements HandlerInterceptor {
         if (response.getContentType() != null) {
             return;
         }
-        final ContentCachingRequestWrapper cachingRequest = (ContentCachingRequestWrapper) request;
-        final ContentCachingResponseWrapper cachingResponse = (ContentCachingResponseWrapper) response;
+        final ContentCachingRequestWrapper cachingRequest = new ContentCachingRequestWrapper(request);
+        final ContentCachingResponseWrapper cachingResponse = new ContentCachingResponseWrapper(response);
         log.info(
                 "ReqBody : {} / ResBody : {}",
                 objectMapper.readTree(cachingRequest.getContentAsByteArray()),
