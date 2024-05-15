@@ -40,16 +40,22 @@ public class EventLetterService {
     @Transactional
     public void sendLetter(Long senderId, SenderInfo senderInfo, Target letterInfo) {
         User user = userRepository.findById(senderId).orElseThrow(UserNotFoundException::new);
-        EventLetter eventLetter = EventLetter.of(user, senderInfo.getSenderName(), letterInfo.getContents(), letterInfo.getImageUrl(), senderInfo.getContactInfo());
+        EventLetter eventLetter = EventLetter.of(user, senderInfo.getSenderName(), letterInfo.getContents(),
+                letterInfo.getImageUrl(), senderInfo.getContactInfo());
         eventLetterRepository.save(eventLetter);
     }
 
     public List<AllEventLetterResponse> getLettersByGender(String gender) {
         gender = convertGender(gender);
 
-        List<EventLetter> eventLettersByGender = eventLetterRepository.findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
+        List<EventLetter> eventLettersByGender = eventLetterRepository
+                .findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
 
-        return eventLettersByGender.stream().map(eventLetter -> AllEventLetterResponse.builder().id(eventLetter.getId()).imageUrl(eventLetter.getImageUrl()).build()).toList();
+        return eventLettersByGender.stream()
+                .map(eventLetter -> AllEventLetterResponse.builder()
+                        .id(eventLetter.getId())
+                        .imageUrl(eventLetter.getImageUrl()).build())
+                .toList();
     }
 
     private String convertGender(String gender) {
@@ -69,7 +75,8 @@ public class EventLetterService {
         long userViewCount = eventLetterLogRepository.countByUser(user);
         checkUserViewCount(userViewCount);
 
-        EventLetter eventLetter = eventLetterRepository.findByIdWithPessimistic(letterId, ACTIVATE.getStatus()).orElseThrow(LetterNotFoundException::new);
+        EventLetter eventLetter = eventLetterRepository
+                .findByIdWithPessimistic(letterId, ACTIVATE.getStatus()).orElseThrow(LetterNotFoundException::new);
         checkLetterViewCount(eventLetter.getViewCount());
         eventLetter.increaseViewCount();
 
