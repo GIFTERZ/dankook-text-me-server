@@ -28,7 +28,8 @@ public class EventLetterController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AllEventLetterResponse>> getLettersByGender(@RequestParam String gender) {
+    @UserAuth
+    public ResponseEntity<List<AllEventLetterResponse>> getLettersByGender(JwtAuthentication auth, @RequestParam String gender) {
         List<AllEventLetterResponse> letterResponses = eventLetterService.getLettersByGender(gender);
         return ResponseEntity.ok().body(letterResponses);
     }
