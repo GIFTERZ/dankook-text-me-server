@@ -130,4 +130,17 @@ public class EventLetterService {
                 .toList();
     }
 
+    private List<EventLetter> findEventLettersByStatus(String status) {
+        List<EventLetter> eventLetters;
+
+        if (StringUtils.isEmpty(status)) {
+            eventLetters = eventLetterRepository.findAll();
+        } else {
+            status = convertStatus(status);
+            eventLetters = eventLetterRepository.findAllByStatus(status);
+        }
+
+        return eventLetters;
+    }
+
 }
