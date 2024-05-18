@@ -143,4 +143,8 @@ public class EventLetterService {
         return eventLetters;
     }
 
+    private String convertStatus(String status) {
+        return StatusType.fromStatus(status).getStatus();
+    }
+
 }
