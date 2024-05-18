@@ -17,7 +17,7 @@ import gifterz.textme.domain.letter.repository.EventLetterRepository;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.exception.UserNotFoundException;
 import gifterz.textme.domain.user.repository.UserRepository;
-import io.micrometer.common.util.StringUtils;
+import org.springframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -133,11 +133,11 @@ public class EventLetterService {
     private List<EventLetter> findEventLettersByStatus(String status) {
         List<EventLetter> eventLetters;
 
-        if (StringUtils.isEmpty(status)) {
-            eventLetters = eventLetterRepository.findAll();
-        } else {
+        if (StringUtils.hasText(status)) {
             status = convertStatus(status);
             eventLetters = eventLetterRepository.findAllByStatus(status);
+        } else {
+            eventLetters = eventLetterRepository.findAll();
         }
 
         return eventLetters;
