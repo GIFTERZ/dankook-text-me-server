@@ -1,7 +1,9 @@
 package gifterz.textme.domain.letter.service;
 
+import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.letter.dto.request.SenderInfo;
 import gifterz.textme.domain.letter.dto.request.Target;
+import gifterz.textme.domain.letter.dto.response.AdminEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.AllEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
 import gifterz.textme.domain.letter.entity.EventLetter;
@@ -15,6 +17,7 @@ import gifterz.textme.domain.letter.repository.EventLetterRepository;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.exception.UserNotFoundException;
 import gifterz.textme.domain.user.repository.UserRepository;
+import org.springframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -110,4 +113,38 @@ public class EventLetterService {
 
         eventLetter.pend();
     }
+
+    public List<AdminEventLetterResponse> findAllLettersByStatus(String status) {
+        List<EventLetter> eventLetters = findEventLettersByStatus(status);
+
+        return eventLetters.stream()
+                .map(eventLetter -> AdminEventLetterResponse.builder()
+                        .id(eventLetter.getId())
+                        .senderName(eventLetter.getSenderName())
+                        .contents(eventLetter.getContents())
+                        .imageUrl(eventLetter.getImageUrl())
+                        .contactInfo(eventLetter.getContactInfo())
+                        .viewCount(eventLetter.getViewCount())
+                        .status(eventLetter.getStatus())
+                        .build())
+                .toList();
+    }
+
+    private List<EventLetter> findEventLettersByStatus(String status) {
+        List<EventLetter> eventLetters;
+
+        if (StringUtils.hasText(status)) {
+            status = convertStatus(status);
+            eventLetters = eventLetterRepository.findAllByStatus(status);
+        } else {
+            eventLetters = eventLetterRepository.findAll();
+        }
+
+        return eventLetters;
+    }
+
+    private String convertStatus(String status) {
+        return StatusType.fromStatus(status).getStatus();
+    }
+
 }

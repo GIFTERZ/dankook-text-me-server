@@ -1,9 +1,11 @@
 package gifterz.textme.domain.letter.controller;
 
 import gifterz.textme.domain.letter.dto.request.EventLetterRequest;
+import gifterz.textme.domain.letter.dto.response.AdminEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.AllEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
 import gifterz.textme.domain.letter.service.EventLetterService;
+import gifterz.textme.global.auth.role.AdminAuth;
 import gifterz.textme.global.auth.role.UserAuth;
 import gifterz.textme.global.security.jwt.JwtAuthentication;
 import jakarta.validation.Valid;
@@ -46,6 +48,13 @@ public class EventLetterController {
     public ResponseEntity<Void> reportLetter(JwtAuthentication auth, @PathVariable("letterId") final Long letterId) {
         eventLetterService.reportLetter(letterId);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/admin/all")
+    @AdminAuth
+    public ResponseEntity<List<AdminEventLetterResponse>> findAllLettersByStatus(@RequestParam(required = false) String status) {
+        List<AdminEventLetterResponse> letterResponses = eventLetterService.findAllLettersByStatus(status);
+        return ResponseEntity.ok().body(letterResponses);
     }
 
 }
