@@ -1,5 +1,7 @@
 package gifterz.textme.domain.entity;
 
+import java.util.Locale;
+
 public enum StatusType {
     ACTIVATE(0, "ACTIVATE"),
     DELETED(1, "DELETED"),
@@ -21,4 +23,9 @@ public enum StatusType {
     public int getNumber() {
         return number;
     }
+
+    public static StatusType fromStatus(String lowerStatus) {
+        return StatusType.valueOf(lowerStatus.toUpperCase(Locale.ENGLISH));
+    }
+
 }
