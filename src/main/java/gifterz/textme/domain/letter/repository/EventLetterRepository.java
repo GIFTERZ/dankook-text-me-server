@@ -19,4 +19,6 @@ public interface EventLetterRepository extends JpaRepository<EventLetter, Long> 
     @Query("select e from EventLetter e where e.id = :id and e.status = :status")
     Optional<EventLetter> findByIdWithPessimistic(Long id, String status);
 
+    List<EventLetter> findAllByStatus(String status);
+
 }
