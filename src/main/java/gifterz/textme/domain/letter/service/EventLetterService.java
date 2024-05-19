@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static gifterz.textme.domain.entity.StatusType.ACTIVATE;
+import static gifterz.textme.domain.entity.StatusType.PENDING;
 import static gifterz.textme.domain.letter.entity.EventLetter.MAX_VIEW_COUNT;
 
 @Service
@@ -117,7 +118,7 @@ public class EventLetterService {
     public void reportLetter(Long eventLetterId) {
         EventLetter eventLetter = eventLetterRepository.findById(eventLetterId).orElseThrow(LetterNotFoundException::new);
 
-        eventLetter.pend();
+        eventLetter.changeStatus(PENDING.getStatus());
     }
 
     public List<AdminEventLetterResponse> findAllLettersByStatus(String status) {
@@ -147,6 +148,14 @@ public class EventLetterService {
 
     private String convertStatus(String status) {
         return StatusType.fromStatus(status).getStatus();
+    }
+
+    @Transactional
+    public void changeLetterStatus(Long letterId, String status) {
+        EventLetter eventLetter = eventLetterRepository.findById(letterId).orElseThrow(LetterNotFoundException::new);
+
+        status = convertStatus(status);
+        eventLetter.changeStatus(status);
     }
 
 }
