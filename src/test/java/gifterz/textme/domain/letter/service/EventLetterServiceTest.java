@@ -161,4 +161,28 @@ class EventLetterServiceTest {
         // then
         assertThat(eventLetter.getViewCount()).isEqualTo(4000);
     }
+
+    @Test
+    void reportEventLetter() {
+        // Given
+        when(eventLetterRepository.findById(any())).thenReturn(Optional.of(eventLetter));
+
+        // When
+        eventLetterService.reportLetter(1L);
+
+        // Then
+        assertThat(eventLetter.getStatus()).isEqualTo(StatusType.PENDING.getStatus());
+    }
+
+    @Test
+    void findEventLetterThatIsMine() {
+        // Given
+        when(eventLetterRepository.findByIdWithPessimistic(any(), any())).thenReturn(Optional.of(eventLetter));
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        // When
+        EventLetterResponse response = eventLetterService.findLetter(1L, 1L);
+
+        // Then
+        assertThat(response).isNotNull();
+    }
 }

@@ -43,13 +43,16 @@ public class DkuMemberClient implements OauthMemberClient {
         DkuTokenResponse dkuTokenResponse = fetchDkuToken(authCode, params[0]);
         String scope = dkuTokenResponse.scope();
         DkuMemberResponse response = dkuApi.fetchMemberInfo(dkuTokenResponse.createToken(), scope);
+
         DkuStudentInfo dkuStudentInfo = response.toDkuStudentInfo();
         OauthId oauthId = OauthId.of(dkuStudentInfo.getUserId(), AuthType.DKU);
         String email = dkuStudentInfo.getEmail();
         String name = dkuStudentInfo.getUsername();
         String gender = dkuStudentInfo.getGender();
+
         Major major = getMajor(dkuStudentInfo);
         User user = getUser(email, name, major, gender);
+
         return OauthMember.of(user, oauthId);
     }
 
