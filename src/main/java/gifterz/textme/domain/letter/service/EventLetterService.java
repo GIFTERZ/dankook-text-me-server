@@ -49,16 +49,22 @@ public class EventLetterService {
     }
 
     public List<AllEventLetterResponse> getLettersByGender(String gender) {
-        gender = convertGender(gender);
+        List<EventLetter> eventLetters = findEventLettersByGender(gender);
 
-        List<EventLetter> eventLettersByGender = eventLetterRepository
-                .findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
-
-        return eventLettersByGender.stream()
+        return eventLetters.stream()
                 .map(eventLetter -> AllEventLetterResponse.builder()
                         .id(eventLetter.getId())
                         .imageUrl(eventLetter.getImageUrl()).build())
                 .toList();
+    }
+
+    private List<EventLetter> findEventLettersByGender(String gender) {
+        if (StringUtils.hasText(gender)) {
+            gender = convertGender(gender);
+            return eventLetterRepository.findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
+        }
+
+        return eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
     }
 
     private String convertGender(String gender) {
@@ -131,16 +137,12 @@ public class EventLetterService {
     }
 
     private List<EventLetter> findEventLettersByStatus(String status) {
-        List<EventLetter> eventLetters;
-
         if (StringUtils.hasText(status)) {
             status = convertStatus(status);
-            eventLetters = eventLetterRepository.findAllByStatus(status);
-        } else {
-            eventLetters = eventLetterRepository.findAll();
+            return eventLetterRepository.findAllByStatus(status);
         }
 
-        return eventLetters;
+        return eventLetterRepository.findAll();
     }
 
     private String convertStatus(String status) {
