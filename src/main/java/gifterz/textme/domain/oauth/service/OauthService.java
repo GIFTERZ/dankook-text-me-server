@@ -42,6 +42,10 @@ public class OauthService {
         if (codeVerifier != null) {
             return loginWithPkce(authType, authCode, codeVerifier);
         }
+        return loginWithAuthCode(authType, authCode);
+    }
+
+    private LoginResponse loginWithAuthCode(AuthType authType, String authCode) {
         OauthMember oauthMember = oauthMemberClientMapper.fetch(authType, authCode);
         oauthMemberRepository.findByUser(oauthMember.getUser()).
                 orElseGet(() -> oauthMemberRepository.save(oauthMember));
