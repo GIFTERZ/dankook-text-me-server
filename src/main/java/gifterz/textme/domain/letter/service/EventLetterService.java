@@ -19,7 +19,6 @@ import gifterz.textme.domain.user.exception.UserNotFoundException;
 import gifterz.textme.domain.user.repository.UserRepository;
 import org.springframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +33,6 @@ import static gifterz.textme.domain.letter.entity.EventLetter.MAX_VIEW_COUNT;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Slf4j
 public class EventLetterService {
     private final EventLetterRepository eventLetterRepository;
     private final EventLetterLogRepository eventLetterLogRepository;
