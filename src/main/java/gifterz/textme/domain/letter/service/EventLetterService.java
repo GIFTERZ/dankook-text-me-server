@@ -117,7 +117,7 @@ public class EventLetterService {
     public void reportLetter(Long eventLetterId) {
         EventLetter eventLetter = eventLetterRepository.findById(eventLetterId).orElseThrow(LetterNotFoundException::new);
 
-        eventLetter.pend();
+        eventLetter.changeStatus("pending");
     }
 
     public List<AdminEventLetterResponse> findAllLettersByStatus(String status) {
@@ -147,6 +147,14 @@ public class EventLetterService {
 
     private String convertStatus(String status) {
         return StatusType.fromStatus(status).getStatus();
+    }
+
+    @Transactional
+    public void changeLetterStatus(Long letterId, String status) {
+        EventLetter eventLetter = eventLetterRepository.findById(letterId).orElseThrow(LetterNotFoundException::new);
+
+        status = convertStatus(status);
+        eventLetter.changeStatus(status);
     }
 
 }
