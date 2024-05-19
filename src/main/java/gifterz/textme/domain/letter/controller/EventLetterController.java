@@ -66,4 +66,11 @@ public class EventLetterController {
         eventLetterService.changeLetterStatus(letterId, status);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @GetMapping("/user")
+    @UserAuth
+    public ResponseEntity<List<EventLetterResponse>> findLettersByUser(JwtAuthentication auth) {
+        List<EventLetterResponse> responses = eventLetterService.findLettersByUser(auth.getUserId());
+        return ResponseEntity.ok().body(responses);
+    }
 }
