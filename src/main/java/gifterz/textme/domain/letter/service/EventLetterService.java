@@ -49,16 +49,25 @@ public class EventLetterService {
     }
 
     public List<AllEventLetterResponse> getLettersByGender(String gender) {
-        gender = convertGender(gender);
+        List<EventLetter> eventLetters = findEventLettersByGender(gender);
 
-        List<EventLetter> eventLettersByGender = eventLetterRepository
-                .findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
-
-        return eventLettersByGender.stream()
+        return eventLetters.stream()
                 .map(eventLetter -> AllEventLetterResponse.builder()
                         .id(eventLetter.getId())
                         .imageUrl(eventLetter.getImageUrl()).build())
                 .toList();
+    }
+
+    private List<EventLetter> findEventLettersByGender(String gender) {
+        List<EventLetter> eventLetters;
+        if (StringUtils.hasText(gender)) {
+            gender = convertGender(gender);
+            eventLetters = eventLetterRepository.findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
+        } else {
+            eventLetters = eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
+        }
+
+        return eventLetters;
     }
 
     private String convertGender(String gender) {
