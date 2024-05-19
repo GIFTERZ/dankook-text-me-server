@@ -1,11 +1,12 @@
 package gifterz.textme.domain.user.service;
 
 import gifterz.textme.domain.oauth.entity.AuthType;
-import gifterz.textme.domain.security.WebSecurityConfig;
-import gifterz.textme.domain.security.entity.RefreshToken;
-import gifterz.textme.domain.security.jwt.JwtUtils;
-import gifterz.textme.domain.security.service.AesUtils;
-import gifterz.textme.domain.security.service.RefreshTokenService;
+import gifterz.textme.domain.user.exception.InvalidPasswordException;
+import gifterz.textme.global.config.WebSecurityConfig;
+import gifterz.textme.global.security.entity.RefreshToken;
+import gifterz.textme.global.security.jwt.JwtUtils;
+import gifterz.textme.global.security.service.AesUtils;
+import gifterz.textme.global.security.service.RefreshTokenService;
 import gifterz.textme.domain.user.dto.request.LoginRequest;
 import gifterz.textme.domain.user.dto.request.SignUpRequest;
 import gifterz.textme.domain.user.dto.response.LoginResponse;
@@ -18,11 +19,6 @@ import gifterz.textme.domain.user.repository.MemberRepository;
 import gifterz.textme.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +33,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
     private final WebSecurityConfig webSecurityConfig;
-    private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AesUtils aesUtils;
 
@@ -62,10 +58,7 @@ public class UserService {
 
     private void checkEmailDuplicated(Optional<User> userExists, String email) {
         if (userExists.isPresent()) {
-            User user = userExists.get();
-            if (user.getAuthType() == AuthType.PASSWORD) {
-                throw new EmailDuplicatedException(email);
-            }
+            throw new EmailDuplicatedException(email);
         }
     }
 
@@ -74,16 +67,19 @@ public class UserService {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(email, password));
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
-
-        String accessToken = jwtUtils.generateAccessToken(email);
+        Member member = memberRepository.findByUser(user).orElseThrow(UserNotFoundException::new);
+        checkPassword(password, member);
+        String accessToken = jwtUtils.generateAccessToken(user);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
         String encryptedUserId = encryptUserId(user.getId());
         return new LoginResponse(encryptedUserId, user.getEmail(), user.getName(), accessToken,
                 refreshToken.getRefreshToken(), refreshToken.getCreatedAt());
+    }
+
+    private void checkPassword(String password, Member member) {
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new InvalidPasswordException("Invalid Password");
+        }
     }
 
     public UserResponse findUserInfo(String email) {

@@ -7,21 +7,28 @@ import lombok.Getter;
 @Getter
 public class SenderInfo {
     private final String senderName;
-    private String imageUrl;
     private String phoneNumber;
     private String email;
+    private String contactInfo;
 
-    public static SenderInfo from(String senderName) {
+    public static SenderInfo fromSenderName(String senderName) {
         return SenderInfo.builder()
                 .senderName(senderName)
                 .build();
     }
 
-    public static SenderInfo of(String email, String senderName, String imageUrl) {
+
+    public static SenderInfo ofSenderNameContactInfo(String senderName, String contactInfo) {
+        return SenderInfo.builder()
+                .senderName(senderName)
+                .contactInfo(contactInfo)
+                .build();
+    }
+
+    public static SenderInfo ofEmailSenderNameImage(String email, String senderName) {
         return SenderInfo.builder()
                 .email(email)
                 .senderName(senderName)
-                .imageUrl(imageUrl)
                 .build();
     }
 }

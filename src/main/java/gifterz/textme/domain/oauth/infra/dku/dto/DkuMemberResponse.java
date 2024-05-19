@@ -13,13 +13,14 @@ public record DkuMemberResponse(
         @NotBlank
         String studentId,
         @NotBlank
-        String name,
+        String username,
         String nickname,
         @NotBlank
         String major,
         @NotBlank
         String department,
         String age,
+        @NotBlank
         String gender,
         String yearOfAdmission,
         String phoneNumber,
@@ -37,7 +38,7 @@ public record DkuMemberResponse(
         return DkuStudentInfo.builder()
                 .userId(this.userId)
                 .studentId(this.studentId)
-                .username(this.name)
+                .username(this.username)
                 .nickname(this.nickname)
                 .major(this.major)
                 .department(this.department)
@@ -54,6 +55,5 @@ public record DkuMemberResponse(
                 .isDkuChecked(this.isDkuChecked)
                 .admin(this.admin)
                 .build();
-
     }
 }

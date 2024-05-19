@@ -10,6 +10,9 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     sourceCompatibility = '17'
+    compileJava {
+        options.compilerArgs << '-parameters'
+    }
 }
 
 configurations {
@@ -26,10 +29,13 @@ repositories {
 dependencies {
     runtimeOnly 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.0.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.0.4'
     implementation 'org.springframework.boot:spring-boot-starter-security:3.0.4'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'com.auth0:java-jwt:4.3.0'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
@@ -44,6 +50,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.1.0'
+    testRuntimeOnly 'com.h2database:h2'
     implementation 'org.springframework:spring-test:6.0.6'
 
     //swagger
@@ -67,7 +74,7 @@ jib {
         image = "khipu/openjdk17-alpine:latest"
     }
     to {
-        image = "juy4556/text-me-docker-repo"
+        image = "juy4556/dku-text-me-docker-repo"
         tags = ["dev"]
     }
 
@@ -77,12 +84,19 @@ jib {
                 'DB_URL'                        : System.getenv("DB_URL"),
                 'DB_USERNAME'                   : System.getenv("DB_USERNAME"),
                 'DB_PASSWORD'                   : System.getenv("DB_PASSWORD"),
+                'DKU_AUTHORIZE_API'             : System.getenv("DKU_AUTHORIZE_API"),
+                'DKU_BASE_URL'                  : System.getenv("DKU_BASE_URL"),
+                'DKU_CLIENT_ID'                 : System.getenv("DKU_CLIENT_ID"),
+                'DKU_CLIENT_SECRET'             : System.getenv("DKU_CLIENT_SECRET"),
+                'DKU_REDIRECT_URI'              : System.getenv("DKU_REDIRECT_URI"),
+                'DKU_SCOPE'                     : System.getenv("DKU_SCOPE"),
                 'JWT_KEY'                       : System.getenv("JWT_KEY"),
                 'JWT_EXPIRY'                    : System.getenv("JWT_EXPIRY"),
                 'REFRESH_EXPIRY'                : System.getenv("REFRESH_EXPIRY"),
                 'AWS_ACCESS_KEY_ID'             : System.getenv("AWS_ACCESS_KEY_ID"),
                 'AWS_SECRET_ACCESS_KEY'         : System.getenv("AWS_SECRET_ACCESS_KEY"),
                 'GOOGLE_APPLICATION_CREDENTIALS': System.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
+                'KAKAO_AUTHORIZE_API'           : System.getenv("KAKAO_AUTHORIZE_API"),
                 'KAKAO_CLIENT_ID'               : System.getenv("KAKAO_CLIENT_ID"),
                 'KAKAO_CLIENT_SECRET'           : System.getenv("KAKAO_CLIENT_SECRET"),
                 'KAKAO_REDIRECT_URI'            : System.getenv("KAKAO_REDIRECT_URI"),

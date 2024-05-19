@@ -4,6 +4,7 @@ import gifterz.textme.common.firebase.FCMService;
 import gifterz.textme.domain.letter.dto.request.LetterRequest;
 import gifterz.textme.domain.letter.dto.request.ReceiverInfo;
 import gifterz.textme.domain.letter.dto.request.SenderInfo;
+import gifterz.textme.domain.letter.dto.request.Target;
 import gifterz.textme.domain.letter.dto.response.AllLetterResponse;
 import gifterz.textme.domain.letter.dto.response.LetterResponse;
 import gifterz.textme.domain.letter.dto.response.SlowLetterWithAddressResponse;
@@ -14,7 +15,7 @@ import gifterz.textme.domain.letter.entity.SlowLetter;
 import gifterz.textme.domain.letter.exception.LetterNotFoundException;
 import gifterz.textme.domain.letter.repository.LetterRepository;
 import gifterz.textme.domain.letter.repository.SlowLetterRepository;
-import gifterz.textme.domain.security.service.AesUtils;
+import gifterz.textme.global.security.service.AesUtils;
 import gifterz.textme.domain.user.entity.Major;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.exception.UserNotFoundException;
@@ -68,15 +69,22 @@ public class LetterService {
         Letter letter = letterRepository.findById(id).orElseThrow(LetterNotFoundException::new);
         User user = letter.getUser();
         Major major = user.getMajor();
-        return new LetterResponse(letter.getId(), user.getName(), major.getDepartment(),
+
+        if (major == null) {
+            return new LetterResponse(letter.getId(), user.getName(), letter.getSenderName(),
+                    letter.getContents(), letter.getImageUrl());
+        }
+        String department = major.getDepartment();
+        return new LetterResponse(letter.getId(), user.getName(), department,
                 letter.getContents(), letter.getImageUrl());
     }
 
     @Transactional
-    public SlowLetterWithEmailResponse sendSlowLetterWithEmail(SenderInfo senderInfo, String contents) {
+    public SlowLetterWithEmailResponse sendSlowLetterWithEmail(SenderInfo senderInfo, Target letterInfo) {
         String email = senderInfo.getEmail();
         String senderName = senderInfo.getSenderName();
-        String imageUrl = senderInfo.getImageUrl();
+        String imageUrl = letterInfo.getImageUrl();
+        String contents = letterInfo.getContents();
         SlowLetter slowLetter = SlowLetter.of(email, senderName, imageUrl, contents);
         slowLetterRepository.save(slowLetter);
         return new SlowLetterWithEmailResponse(senderInfo, contents);

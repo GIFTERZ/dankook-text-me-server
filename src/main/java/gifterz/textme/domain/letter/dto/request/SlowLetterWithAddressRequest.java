@@ -16,7 +16,7 @@ public record SlowLetterWithAddressRequest(
     }
 
     public SenderInfo toSenderInfo() {
-        return SenderInfo.from(senderName);
+        return SenderInfo.fromSenderName(senderName);
     }
 
     public ReceiverInfo toReceiverInfo() {

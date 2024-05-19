@@ -11,7 +11,6 @@ import org.springframework.web.service.annotation.PostExchange;
 
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
-
 public interface KakaoApi {
 
     @PostExchange(url = "https://kauth.kakao.com/oauth/token", contentType = APPLICATION_FORM_URLENCODED_VALUE)

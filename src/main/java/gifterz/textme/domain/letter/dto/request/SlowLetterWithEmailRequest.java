@@ -10,6 +10,10 @@ public record SlowLetterWithEmailRequest(
         String imageUrl
 ) {
     public SenderInfo toSenderInfo() {
-        return SenderInfo.of(email, senderName, imageUrl);
+        return SenderInfo.ofEmailSenderNameImage(email, senderName);
+    }
+
+    public Target toTarget() {
+        return Target.of(contents, imageUrl);
     }
 }
