@@ -62,9 +62,9 @@ public class EventLetterService {
         if (StringUtils.hasText(gender)) {
             gender = convertGender(gender);
             return eventLetterRepository.findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
-        } else {
-            return eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
         }
+
+        return eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
     }
 
     private String convertGender(String gender) {
@@ -140,9 +140,9 @@ public class EventLetterService {
         if (StringUtils.hasText(status)) {
             status = convertStatus(status);
             return eventLetterRepository.findAllByStatus(status);
-        } else {
-            return eventLetterRepository.findAll();
         }
+
+        return eventLetterRepository.findAll();
     }
 
     private String convertStatus(String status) {
