@@ -161,4 +161,17 @@ class EventLetterServiceTest {
         // then
         assertThat(eventLetter.getViewCount()).isEqualTo(4000);
     }
+
+    @Test
+    void reportEventLetter() {
+        // Given
+        when(eventLetterRepository.findById(any())).thenReturn(Optional.of(eventLetter));
+
+        // When
+        eventLetterService.reportLetter(1L);
+
+        // Then
+        assertThat(eventLetter.getStatus()).isEqualTo(StatusType.PENDING.getStatus());
+    }
+
 }
