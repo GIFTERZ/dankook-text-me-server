@@ -35,7 +35,7 @@ public class EventLetterController {
         List<AllEventLetterResponse> letterResponses = eventLetterService.getLettersByGender(gender);
         return ResponseEntity.ok().body(letterResponses);
     }
-  
+
     @GetMapping("/{id}")
     @UserAuth
     public ResponseEntity<EventLetterResponse> findLetter(JwtAuthentication auth, @PathVariable("id") final Long letterId) {
@@ -52,9 +52,18 @@ public class EventLetterController {
 
     @GetMapping("/admin/all")
     @AdminAuth
-    public ResponseEntity<List<AdminEventLetterResponse>> findAllLettersByStatus(@RequestParam(required = false) String status) {
+    public ResponseEntity<List<AdminEventLetterResponse>> findAllLettersByStatus(JwtAuthentication auth,
+                                                                                 @RequestParam(required = false) String status) {
         List<AdminEventLetterResponse> letterResponses = eventLetterService.findAllLettersByStatus(status);
         return ResponseEntity.ok().body(letterResponses);
     }
 
+    @PatchMapping("/{letterId}/{status}")
+    @AdminAuth
+    public ResponseEntity<Void> changeLetterStatus(JwtAuthentication auth,
+                                                   @PathVariable("letterId") final Long letterId,
+                                                   @PathVariable("status") String status) {
+        eventLetterService.changeLetterStatus(letterId, status);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
