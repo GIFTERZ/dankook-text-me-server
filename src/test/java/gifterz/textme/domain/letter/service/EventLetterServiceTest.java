@@ -174,4 +174,15 @@ class EventLetterServiceTest {
         assertThat(eventLetter.getStatus()).isEqualTo(StatusType.PENDING.getStatus());
     }
 
+    @Test
+    void findEventLetterThatIsMine() {
+        // Given
+        when(eventLetterRepository.findByIdWithPessimistic(any(), any())).thenReturn(Optional.of(eventLetter));
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        // When
+        EventLetterResponse response = eventLetterService.findLetter(1L, 1L);
+
+        // Then
+        assertThat(response).isNotNull();
+    }
 }
