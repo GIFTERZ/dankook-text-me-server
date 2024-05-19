@@ -12,7 +12,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface EventLetterLogRepository extends JpaRepository<EventLetterLog, Long> {
 
-    @Query("select count(e) from EventLetterLog e where e.user = ?1")
     long countByUser(User user);
 
     List<EventLetterLog> findAllByUserId(Long userId);
