@@ -158,4 +158,11 @@ public class EventLetterService {
         eventLetter.changeStatus(status);
     }
 
+    public List<EventLetterResponse> findLettersByUser(Long userId) {
+        List<EventLetterLog> eventLetterLogs = eventLetterLogRepository.findAllByUserId(userId);
+
+        return eventLetterLogs.stream()
+                .map(eventLetterLog -> EventLetterResponse.of(eventLetterLog.getEventLetter()))
+                .toList();
+    }
 }
