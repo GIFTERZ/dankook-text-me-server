@@ -31,14 +31,18 @@ public class EventLetterController {
 
     @GetMapping
     @UserAuth
-    public ResponseEntity<List<AllEventLetterResponse>> getLettersByGender(JwtAuthentication auth, @RequestParam(required = false) String gender) {
+    public ResponseEntity<List<AllEventLetterResponse>> getLettersByGender(
+            JwtAuthentication auth,
+            @RequestParam(required = false) String gender
+    ) {
         List<AllEventLetterResponse> letterResponses = eventLetterService.getLettersByGender(gender);
         return ResponseEntity.ok().body(letterResponses);
     }
 
     @GetMapping("/{id}")
     @UserAuth
-    public ResponseEntity<EventLetterResponse> findLetter(JwtAuthentication auth, @PathVariable("id") final Long letterId) {
+    public ResponseEntity<EventLetterResponse> findLetter(JwtAuthentication auth,
+                                                          @PathVariable("id") final Long letterId) {
         EventLetterResponse response = eventLetterService.findLetter(auth.getUserId(), letterId);
         return ResponseEntity.ok().body(response);
     }
@@ -52,8 +56,10 @@ public class EventLetterController {
 
     @GetMapping("/admin/all")
     @AdminAuth
-    public ResponseEntity<List<AdminEventLetterResponse>> findAllLettersByStatus(JwtAuthentication auth,
-                                                                                 @RequestParam(required = false) String status) {
+    public ResponseEntity<List<AdminEventLetterResponse>> findAllLettersByStatus(
+            JwtAuthentication auth,
+            @RequestParam(required = false) String status
+    ) {
         List<AdminEventLetterResponse> letterResponses = eventLetterService.findAllLettersByStatus(status);
         return ResponseEntity.ok().body(letterResponses);
     }
