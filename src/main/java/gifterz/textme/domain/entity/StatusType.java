@@ -24,8 +24,8 @@ public enum StatusType {
         return number;
     }
 
-    public static StatusType fromStatus(String lowerStatus) {
-        return StatusType.valueOf(lowerStatus.toUpperCase(Locale.ENGLISH));
+    public static StatusType fromStatus(String inputStatus) {
+        return StatusType.valueOf(inputStatus.toUpperCase(Locale.ENGLISH));
     }
 
 }
