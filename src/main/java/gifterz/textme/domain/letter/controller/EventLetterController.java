@@ -58,4 +58,11 @@ public class EventLetterController {
         List<EventLetterResponse> responses = eventLetterService.findLettersByUser(auth.getUserId());
         return ResponseEntity.ok().body(responses);
     }
+
+    @GetMapping("/contacts/not-null")
+    @DkuAuth
+    public ResponseEntity<List<EventLetterResponse>> findLettersByContacts(JwtAuthentication auth) {
+        List<EventLetterResponse> responses = eventLetterService.findLettersByContacts();
+        return ResponseEntity.ok().body(responses);
+    }
 }
