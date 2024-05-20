@@ -61,8 +61,10 @@ public class EventLetterController {
 
     @GetMapping("/contacts/not-null")
     @DkuAuth
-    public ResponseEntity<List<EventLetterResponse>> findLettersByContacts(JwtAuthentication auth) {
-        List<EventLetterResponse> responses = eventLetterService.findLettersByContacts();
+    public ResponseEntity<List<EventLetterResponse>> findLettersByContacts(
+            JwtAuthentication auth,
+            @RequestParam(required = false) String gender) {
+        List<EventLetterResponse> responses = eventLetterService.findLettersByContacts(gender);
         return ResponseEntity.ok().body(responses);
     }
 }
