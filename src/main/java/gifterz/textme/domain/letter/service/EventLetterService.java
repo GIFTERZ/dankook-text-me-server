@@ -167,4 +167,10 @@ public class EventLetterService {
                 .map(eventLetterLog -> EventLetterResponse.of(eventLetterLog.getEventLetter()))
                 .toList();
     }
+
+    public List<EventLetterResponse> findLettersByContacts() {
+        return eventLetterRepository.findByContactInfoContaining(ACTIVATE.getStatus()).stream()
+                .map(EventLetterResponse::of)
+                .toList();
+    }
 }
