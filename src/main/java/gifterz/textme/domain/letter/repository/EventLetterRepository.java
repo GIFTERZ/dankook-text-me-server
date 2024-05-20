@@ -21,4 +21,6 @@ public interface EventLetterRepository extends JpaRepository<EventLetter, Long> 
 
     List<EventLetter> findAllByStatus(String status);
 
+    @Query("select e from EventLetter e where e.contactInfo is not null and e.status = :status")
+    List<EventLetter> findByContactInfoContaining(String status);
 }
