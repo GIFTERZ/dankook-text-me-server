@@ -29,4 +29,20 @@ public class RoleCheckAspect {
         return userRole == UserRole.USER || userRole == UserRole.ADMIN;
     }
 
+    @Before("gifterz.textme.global.auth.pointcut.Pointcuts.adminAuth()")
+    public void checkAdminAuth(JoinPoint joinPoint) {
+        Object[] args = joinPoint.getArgs();
+        for (Object arg : args) {
+            if (arg instanceof JwtAuthentication authentication) {
+                if (hasAdminAuth(authentication.getUserRole())) {
+                    return;
+                }
+                throw new NoAuthorizationException("관리자 권한이 없습니다.");
+            }
+        }
+    }
+
+    private static boolean hasAdminAuth(UserRole userRole) {
+        return userRole == UserRole.ADMIN;
+    }
 }
