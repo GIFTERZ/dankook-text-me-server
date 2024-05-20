@@ -1,5 +1,6 @@
 package gifterz.textme.global.security.jwt;
 
+import gifterz.textme.domain.oauth.entity.AuthType;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.global.auth.role.UserRole;
 import io.jsonwebtoken.*;
@@ -30,6 +31,7 @@ public class JwtUtils {
         claims.put("userId", user.getId());
         claims.put("email", user.getEmail());
         claims.put("role", user.getUserRole());
+        claims.put("authType", user.getAuthType());
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -63,7 +65,8 @@ public class JwtUtils {
         Long userId = claims.get("userId", Long.class);
         String email = claims.get("email", String.class);
         String userRole = claims.get("role", String.class);
-        return new JwtAuthentication(userId, email, UserRole.valueOf(userRole));
+        String authType = claims.get("authType", String.class);
+        return new JwtAuthentication(userId, email, UserRole.valueOf(userRole), AuthType.valueOf(authType));
 
     }
 

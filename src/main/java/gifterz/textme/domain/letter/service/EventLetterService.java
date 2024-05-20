@@ -167,4 +167,17 @@ public class EventLetterService {
                 .map(eventLetterLog -> EventLetterResponse.of(eventLetterLog.getEventLetter()))
                 .toList();
     }
+
+    public List<EventLetterResponse> findLettersByContacts(String gender) {
+        if (StringUtils.hasText(gender)) {
+            gender = convertGender(gender);
+            return eventLetterRepository.findAllByContactInfoContainingAndGender(gender, ACTIVATE.getStatus()).stream()
+                    .map(EventLetterResponse::of)
+                    .toList();
+        }
+
+        return eventLetterRepository.findByContactInfoContaining(ACTIVATE.getStatus()).stream()
+                .map(EventLetterResponse::of)
+                .toList();
+    }
 }

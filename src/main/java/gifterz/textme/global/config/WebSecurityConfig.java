@@ -52,7 +52,6 @@ public class WebSecurityConfig {
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth.requestMatchers(PUBLIC_URI)
                         .permitAll()
-                        .requestMatchers(ADMIN_URI).hasAuthority(UserRole.ROLE_ADMIN)
                         .anyRequest().authenticated())
                 .build();
     }
