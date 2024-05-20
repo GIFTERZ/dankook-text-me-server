@@ -1,7 +1,6 @@
 package gifterz.textme.domain.letter.controller;
 
 import gifterz.textme.domain.letter.dto.request.EventLetterRequest;
-import gifterz.textme.domain.letter.dto.response.AdminEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.AllEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
 import gifterz.textme.domain.letter.service.EventLetterService;
