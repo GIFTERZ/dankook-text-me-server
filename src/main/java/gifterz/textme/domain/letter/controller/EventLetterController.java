@@ -54,25 +54,6 @@ public class EventLetterController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/admin/all")
-    @AdminAuth
-    public ResponseEntity<List<AdminEventLetterResponse>> findAllLettersByStatus(
-            JwtAuthentication auth,
-            @RequestParam(required = false) String status
-    ) {
-        List<AdminEventLetterResponse> letterResponses = eventLetterService.findAllLettersByStatus(status);
-        return ResponseEntity.ok().body(letterResponses);
-    }
-
-    @PatchMapping("/{letterId}/{status}")
-    @AdminAuth
-    public ResponseEntity<Void> changeLetterStatus(JwtAuthentication auth,
-                                                   @PathVariable("letterId") final Long letterId,
-                                                   @PathVariable("status") String status) {
-        eventLetterService.changeLetterStatus(letterId, status);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
     @GetMapping("/user")
     @UserAuth
     public ResponseEntity<List<EventLetterResponse>> findLettersByUser(JwtAuthentication auth) {
