@@ -23,6 +23,7 @@ public class RoleCheckAspect {
                 throw new NoAuthorizationException("사용자 권한이 없습니다.");
             }
         }
+        throw new NoAuthorizationException("사용자 권한이 없습니다.");
     }
 
     private static boolean hasAuthority(UserRole userRole) {
@@ -40,6 +41,7 @@ public class RoleCheckAspect {
                 throw new NoAuthorizationException("관리자 권한이 없습니다.");
             }
         }
+        throw new NoAuthorizationException("관리자 권한이 없습니다.");
     }
 
     private static boolean hasAdminAuth(UserRole userRole) {
