@@ -55,4 +55,9 @@ public class OpenApiConfig {
         return GroupedOpenApi.builder().group("이벤트 편지 관련 API").pathsToMatch(paths).build();
     }
 
+    @Bean
+    public GroupedOpenApi adminApi() {
+        String[] paths = {"/admin/**"};
+        return GroupedOpenApi.builder().group("관리자 API").pathsToMatch(paths).build();
+    }
 }
