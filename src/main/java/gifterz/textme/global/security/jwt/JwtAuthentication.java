@@ -1,5 +1,6 @@
 package gifterz.textme.global.security.jwt;
 
+import gifterz.textme.domain.oauth.entity.AuthType;
 import gifterz.textme.global.auth.role.UserRole;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,7 @@ public class JwtAuthentication implements Authentication {
     private Long userId;
     private String email;
     private UserRole userRole;
+    private AuthType authType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -33,6 +35,10 @@ public class JwtAuthentication implements Authentication {
 
     public UserRole getUserRole() {
         return userRole;
+    }
+
+    public AuthType getAuthType() {
+        return authType;
     }
 
     @Override

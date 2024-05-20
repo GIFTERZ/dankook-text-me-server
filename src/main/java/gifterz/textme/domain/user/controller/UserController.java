@@ -1,7 +1,6 @@
 package gifterz.textme.domain.user.controller;
 
 import gifterz.textme.common.firebase.FCMService;
-import gifterz.textme.global.auth.role.AdminAuth;
 import gifterz.textme.global.auth.role.UserAuth;
 import gifterz.textme.global.security.jwt.JwtAuthentication;
 import gifterz.textme.global.security.service.RefreshTokenService;

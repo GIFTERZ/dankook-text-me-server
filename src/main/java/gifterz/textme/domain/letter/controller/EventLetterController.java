@@ -1,12 +1,10 @@
 package gifterz.textme.domain.letter.controller;
 
 import gifterz.textme.domain.letter.dto.request.EventLetterRequest;
-import gifterz.textme.domain.letter.dto.response.AdminEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.AllEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
 import gifterz.textme.domain.letter.service.EventLetterService;
-import gifterz.textme.global.auth.role.AdminAuth;
-import gifterz.textme.global.auth.role.UserAuth;
+import gifterz.textme.global.auth.role.DkuAuth;
 import gifterz.textme.global.security.jwt.JwtAuthentication;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +21,14 @@ public class EventLetterController {
     private final EventLetterService eventLetterService;
 
     @PostMapping
-    @UserAuth
+    @DkuAuth
     public ResponseEntity<Void> sendLetter(JwtAuthentication auth, @RequestBody @Valid EventLetterRequest request) {
         eventLetterService.sendLetter(auth.getUserId(), request.toSenderInfo(), request.toTarget());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping
-    @UserAuth
+    @DkuAuth
     public ResponseEntity<List<AllEventLetterResponse>> getLettersByGender(
             JwtAuthentication auth,
             @RequestParam(required = false) String gender
@@ -40,7 +38,7 @@ public class EventLetterController {
     }
 
     @GetMapping("/{id}")
-    @UserAuth
+    @DkuAuth
     public ResponseEntity<EventLetterResponse> findLetter(JwtAuthentication auth,
                                                           @PathVariable("id") final Long letterId) {
         EventLetterResponse response = eventLetterService.findLetter(auth.getUserId(), letterId);
@@ -48,33 +46,14 @@ public class EventLetterController {
     }
 
     @PostMapping("/{letterId}/reports")
-    @UserAuth
+    @DkuAuth
     public ResponseEntity<Void> reportLetter(JwtAuthentication auth, @PathVariable("letterId") final Long letterId) {
         eventLetterService.reportLetter(letterId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/admin/all")
-    @AdminAuth
-    public ResponseEntity<List<AdminEventLetterResponse>> findAllLettersByStatus(
-            JwtAuthentication auth,
-            @RequestParam(required = false) String status
-    ) {
-        List<AdminEventLetterResponse> letterResponses = eventLetterService.findAllLettersByStatus(status);
-        return ResponseEntity.ok().body(letterResponses);
-    }
-
-    @PatchMapping("/{letterId}/{status}")
-    @AdminAuth
-    public ResponseEntity<Void> changeLetterStatus(JwtAuthentication auth,
-                                                   @PathVariable("letterId") final Long letterId,
-                                                   @PathVariable("status") String status) {
-        eventLetterService.changeLetterStatus(letterId, status);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
     @GetMapping("/user")
-    @UserAuth
+    @DkuAuth
     public ResponseEntity<List<EventLetterResponse>> findLettersByUser(JwtAuthentication auth) {
         List<EventLetterResponse> responses = eventLetterService.findLettersByUser(auth.getUserId());
         return ResponseEntity.ok().body(responses);
