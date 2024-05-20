@@ -22,6 +22,7 @@ public class AuthTypeCheckAspect {
                 throw new NoAuthorizationException("DKU 로그인 시에만 접근 가능합니다.");
             }
         }
+        throw new NoAuthorizationException("DKU 로그인 시에만 접근 가능합니다.");
     }
 
     private static boolean hasDkuAuth(UserRole userRole, AuthType authType) {
