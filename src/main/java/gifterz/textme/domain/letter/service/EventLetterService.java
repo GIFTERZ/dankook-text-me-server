@@ -21,8 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
 
 import static gifterz.textme.domain.entity.StatusType.ACTIVATE;
 import static gifterz.textme.domain.entity.StatusType.PENDING;
@@ -35,7 +34,6 @@ public class EventLetterService {
     private final EventLetterRepository eventLetterRepository;
     private final EventLetterLogRepository eventLetterLogRepository;
     private final UserRepository userRepository;
-    public static ConcurrentHashMap<Long, HashSet<Long>> viewMap = new ConcurrentHashMap<>();
 
     @Transactional
     public void sendLetter(Long senderId, SenderInfo senderInfo, Target letterInfo) {
@@ -79,18 +77,22 @@ public class EventLetterService {
     @Transactional
     public WhoseEventLetterResponse findLetter(Long userId, Long letterId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        checkAlreadyViewedUser(userId, letterId);
+        EventLetter myEventLetter = eventLetterRepository.findByUser(user).orElseThrow(NotPostedUserException::new);
 
-        long userViewCount = eventLetterLogRepository.countByUser(user);
+        List<EventLetterLog> viewedLogs = eventLetterLogRepository.findAllByUserId(userId);
+        long userViewCount = viewedLogs.size();
         checkUserViewCount(userViewCount);
 
         EventLetter eventLetter = eventLetterRepository
                 .findByIdWithPessimistic(letterId, ACTIVATE.getStatus()).orElseThrow(LetterNotFoundException::new);
         checkLetterViewCount(eventLetter.getViewCount());
 
-        if (eventLetter.getUser() == user) {
+        if (myEventLetter.equals(eventLetter)) {
             return WhoseEventLetterResponse.of(eventLetter, true);
         }
+
+        checkIsViewedEventLetter(viewedLogs, eventLetter);
+
         eventLetter.increaseViewCount();
 
         EventLetterLog eventLetterLog = EventLetterLog.of(user, eventLetter);
@@ -99,10 +101,14 @@ public class EventLetterService {
         return WhoseEventLetterResponse.of(eventLetter, false);
     }
 
-    private void checkAlreadyViewedUser(Long userId, Long letterId) {
-        if (viewMap.getOrDefault(letterId, new HashSet<>()).contains(userId)) {
-            throw new AlreadyViewedUserException();
-        }
+    private void checkIsViewedEventLetter(List<EventLetterLog> viewedLogs, EventLetter eventLetter) {
+        viewedLogs.forEach(eventLetterLog -> {
+            EventLetter viewedEventLetter = eventLetterLog.getEventLetter();
+            Long viewedEventLetterId = viewedEventLetter.getId();
+            if (Objects.equals(eventLetter.getId(), viewedEventLetterId)) {
+                throw new AlreadyViewedUserException();
+            }
+        });
     }
 
     private void checkUserViewCount(long viewCount) {
