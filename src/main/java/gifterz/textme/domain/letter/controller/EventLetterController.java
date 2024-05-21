@@ -3,6 +3,7 @@ package gifterz.textme.domain.letter.controller;
 import gifterz.textme.domain.letter.dto.request.EventLetterRequest;
 import gifterz.textme.domain.letter.dto.response.AllEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
+import gifterz.textme.domain.letter.dto.response.WhoseEventLetterResponse;
 import gifterz.textme.domain.letter.service.EventLetterService;
 import gifterz.textme.global.auth.role.DkuAuth;
 import gifterz.textme.global.security.jwt.JwtAuthentication;
@@ -39,9 +40,9 @@ public class EventLetterController {
 
     @GetMapping("/{id}")
     @DkuAuth
-    public ResponseEntity<EventLetterResponse> findLetter(JwtAuthentication auth,
+    public ResponseEntity<WhoseEventLetterResponse> findLetter(JwtAuthentication auth,
                                                           @PathVariable("id") final Long letterId) {
-        EventLetterResponse response = eventLetterService.findLetter(auth.getUserId(), letterId);
+        WhoseEventLetterResponse response = eventLetterService.findLetter(auth.getUserId(), letterId);
         return ResponseEntity.ok().body(response);
     }
 
