@@ -15,4 +15,6 @@ public interface EventLetterLogRepository extends JpaRepository<EventLetterLog, 
     long countByUser(User user);
 
     List<EventLetterLog> findAllByUserId(Long userId);
+
+    List<EventLetterLog> findByUser(User user);
 }
