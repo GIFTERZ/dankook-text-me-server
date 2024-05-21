@@ -78,7 +78,7 @@ public class EventLetterService {
     @Transactional
     public WhoseEventLetterResponse findLetter(Long userId, Long letterId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        checkAlreadyViewedUser(userId, letterId);
+        EventLetter myEventLetter = eventLetterRepository.findByUser(user).orElseThrow(NotPostedUserException::new);
 
         long userViewCount = eventLetterLogRepository.countByUser(user);
         checkUserViewCount(userViewCount);
