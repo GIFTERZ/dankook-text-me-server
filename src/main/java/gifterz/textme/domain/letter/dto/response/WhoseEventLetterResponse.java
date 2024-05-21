@@ -1,22 +1,24 @@
 package gifterz.textme.domain.letter.dto.response;
 
-
 import gifterz.textme.domain.letter.entity.EventLetter;
 
-public record EventLetterResponse(
+public record WhoseEventLetterResponse(
         Long id,
         String senderName,
         String contents,
         String imageUrl,
-        String contactInfo
+        String contactInfo,
+        boolean isMine
 
 ) {
-    public static EventLetterResponse from(EventLetter eventLetter) {
-        return new EventLetterResponse(
+    public static WhoseEventLetterResponse of(EventLetter eventLetter, boolean isMine) {
+        return new WhoseEventLetterResponse(
                 eventLetter.getId(),
                 eventLetter.getSenderName(),
                 eventLetter.getContents(),
                 eventLetter.getImageUrl(),
-                eventLetter.getContactInfo());
+                eventLetter.getContactInfo(),
+                isMine
+        );
     }
 }

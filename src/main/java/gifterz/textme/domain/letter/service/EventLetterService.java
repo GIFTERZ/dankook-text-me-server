@@ -6,12 +6,10 @@ import gifterz.textme.domain.letter.dto.request.Target;
 import gifterz.textme.domain.letter.dto.response.AdminEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.AllEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
+import gifterz.textme.domain.letter.dto.response.WhoseEventLetterResponse;
 import gifterz.textme.domain.letter.entity.EventLetter;
 import gifterz.textme.domain.letter.entity.EventLetterLog;
-import gifterz.textme.domain.letter.exception.AlreadyViewedUserException;
-import gifterz.textme.domain.letter.exception.ExceedLetterViewCountException;
-import gifterz.textme.domain.letter.exception.ExceedUserViewCountException;
-import gifterz.textme.domain.letter.exception.LetterNotFoundException;
+import gifterz.textme.domain.letter.exception.*;
 import gifterz.textme.domain.letter.repository.EventLetterLogRepository;
 import gifterz.textme.domain.letter.repository.EventLetterRepository;
 import gifterz.textme.domain.user.entity.User;
@@ -42,6 +40,9 @@ public class EventLetterService {
     @Transactional
     public void sendLetter(Long senderId, SenderInfo senderInfo, Target letterInfo) {
         User user = userRepository.findById(senderId).orElseThrow(UserNotFoundException::new);
+        eventLetterRepository.findByUser(user).ifPresent(eventLetter -> {
+            throw new AlreadyPostedUserException();
+        });
         EventLetter eventLetter = EventLetter.of(user, senderInfo.getSenderName(), letterInfo.getContents(),
                 letterInfo.getImageUrl(), senderInfo.getContactInfo());
         eventLetterRepository.save(eventLetter);
@@ -76,7 +77,7 @@ public class EventLetterService {
     }
 
     @Transactional
-    public EventLetterResponse findLetter(Long userId, Long letterId) {
+    public WhoseEventLetterResponse findLetter(Long userId, Long letterId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         checkAlreadyViewedUser(userId, letterId);
 
@@ -88,14 +89,14 @@ public class EventLetterService {
         checkLetterViewCount(eventLetter.getViewCount());
 
         if (eventLetter.getUser() == user) {
-            return EventLetterResponse.of(eventLetter);
+            return WhoseEventLetterResponse.of(eventLetter, true);
         }
         eventLetter.increaseViewCount();
 
         EventLetterLog eventLetterLog = EventLetterLog.of(user, eventLetter);
         eventLetterLogRepository.save(eventLetterLog);
 
-        return EventLetterResponse.of(eventLetter);
+        return WhoseEventLetterResponse.of(eventLetter, false);
     }
 
     private void checkAlreadyViewedUser(Long userId, Long letterId) {
@@ -164,7 +165,7 @@ public class EventLetterService {
         List<EventLetterLog> eventLetterLogs = eventLetterLogRepository.findAllByUserId(userId);
 
         return eventLetterLogs.stream()
-                .map(eventLetterLog -> EventLetterResponse.of(eventLetterLog.getEventLetter()))
+                .map(eventLetterLog -> EventLetterResponse.from(eventLetterLog.getEventLetter()))
                 .toList();
     }
 
@@ -172,12 +173,12 @@ public class EventLetterService {
         if (StringUtils.hasText(gender)) {
             gender = convertGender(gender);
             return eventLetterRepository.findAllByContactInfoContainingAndGender(gender, ACTIVATE.getStatus()).stream()
-                    .map(EventLetterResponse::of)
+                    .map(EventLetterResponse::from)
                     .toList();
         }
 
         return eventLetterRepository.findByContactInfoContaining(ACTIVATE.getStatus()).stream()
-                .map(EventLetterResponse::of)
+                .map(EventLetterResponse::from)
                 .toList();
     }
 }
