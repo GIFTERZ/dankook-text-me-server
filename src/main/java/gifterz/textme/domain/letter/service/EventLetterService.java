@@ -48,8 +48,8 @@ public class EventLetterService {
         eventLetterRepository.save(eventLetter);
     }
 
-    public List<AllEventLetterResponse> getLettersByFiltering(Long userId, String gender, Boolean isContact) {
-        List<EventLetter> eventLetters = findEventLettersByGenderAndContact(gender, isContact);
+    public List<AllEventLetterResponse> getLettersByFiltering(Long userId, String gender, Boolean hasContact) {
+        List<EventLetter> eventLetters = findEventLettersByGenderAndContact(gender, hasContact);
 
         return eventLetters.stream()
                 .map(eventLetter -> AllEventLetterResponse.builder()
@@ -60,15 +60,15 @@ public class EventLetterService {
                 .toList();
     }
 
-    private List<EventLetter> findEventLettersByGenderAndContact(String gender, Boolean isContact) {
+    private List<EventLetter> findEventLettersByGenderAndContact(String gender, Boolean hasContact) {
         if (StringUtils.hasText(gender)) {
             gender = convertGender(gender);
-            if (isContact == null || !isContact) {
+            if (hasContact == null || !hasContact) {
                 return eventLetterRepository.findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
             }
             return eventLetterRepository.findAllByUserGenderAndStatusAndContactInfoNotNull(gender, ACTIVATE.getStatus());
         } else {
-            if (isContact == null || !isContact) {
+            if (hasContact == null || !hasContact) {
                 return eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
             }
             return eventLetterRepository.findAllByStatusAndContactInfoNotNull(ACTIVATE.getStatus());

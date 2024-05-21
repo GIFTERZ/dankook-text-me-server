@@ -33,9 +33,9 @@ public class EventLetterController {
     public ResponseEntity<List<AllEventLetterResponse>> getLettersByFiltering(
             JwtAuthentication auth,
             @RequestParam(required = false) String gender,
-            @RequestParam(required = false) Boolean isContact
+            @RequestParam(required = false) Boolean hasContact
     ) {
-        List<AllEventLetterResponse> letterResponses = eventLetterService.getLettersByFiltering(auth.getUserId(), gender, isContact);
+        List<AllEventLetterResponse> letterResponses = eventLetterService.getLettersByFiltering(auth.getUserId(), gender, hasContact);
         return ResponseEntity.ok().body(letterResponses);
     }
 
