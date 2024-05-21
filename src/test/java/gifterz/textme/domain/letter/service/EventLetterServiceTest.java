@@ -3,8 +3,9 @@ package gifterz.textme.domain.letter.service;
 import gifterz.textme.domain.entity.StatusType;
 import gifterz.textme.domain.letter.dto.request.SenderInfo;
 import gifterz.textme.domain.letter.dto.request.Target;
-import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
+import gifterz.textme.domain.letter.dto.response.WhoseEventLetterResponse;
 import gifterz.textme.domain.letter.entity.EventLetter;
+import gifterz.textme.domain.letter.entity.EventLetterLog;
 import gifterz.textme.domain.letter.repository.EventLetterLogRepository;
 import gifterz.textme.domain.letter.repository.EventLetterRepository;
 import gifterz.textme.domain.oauth.entity.AuthType;
@@ -12,7 +13,6 @@ import gifterz.textme.domain.user.entity.Major;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.repository.UserRepository;
 import gifterz.textme.error.exception.ApplicationException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,14 +22,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static gifterz.textme.domain.letter.entity.EventLetter.MAX_VIEW_COUNT;
-import static gifterz.textme.domain.letter.service.EventLetterService.viewMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,17 +48,18 @@ class EventLetterServiceTest {
     private EventLetterLogRepository eventLetterLogRepository;
     private User user;
     private EventLetter eventLetter;
+    private EventLetterLog eventLetterLog;
+
+    private List<EventLetterLog> eventLetterLogs = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
         Major major = Major.of("department", "major");
         user = User.of("email", "name", AuthType.PASSWORD, major, "남자");
-        eventLetter = EventLetter.of(user, "senderName", "contents", "imageUrl", "contactInfo");
-    }
-
-    @AfterEach()
-    void clearViewMap() {
-        viewMap.clear();
+        eventLetter = EventLetter.of(user, "senderName", "contents",
+                "imageUrl", "contactInfo");
+        eventLetterLog = EventLetterLog.of(user, eventLetter);
+        eventLetterLogs.add(eventLetterLog);
     }
 
     @Test
@@ -83,14 +84,13 @@ class EventLetterServiceTest {
     @Test
     void getEventLetter() {
         // Given
-        viewMap.put(1L, new HashSet<>());
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(eventLetterRepository.findByUser(user)).thenReturn(Optional.of(eventLetter));
         when(eventLetterRepository.findByIdWithPessimistic(1L, StatusType.ACTIVATE.getStatus()))
                 .thenReturn(Optional.of(eventLetter));
-        when(eventLetterLogRepository.countByUser(user)).thenReturn(0L);
 
         // When
-        EventLetterResponse response = eventLetterService.findLetter(1L, 1L);
+        WhoseEventLetterResponse response = eventLetterService.findLetter(1L, 1L);
 
         // Then
         assertAll(
@@ -105,8 +105,11 @@ class EventLetterServiceTest {
     @Test
     void getEventLetterWithUserViewCountOver3() {
         // Given
+        eventLetterLogs.add(eventLetterLog);
+        eventLetterLogs.add(eventLetterLog);
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(eventLetterLogRepository.countByUser(any())).thenReturn(3L);
+        when(eventLetterRepository.findByUser(user)).thenReturn(Optional.of(eventLetter));
+        when(eventLetterLogRepository.findAllByUserId(any())).thenReturn(eventLetterLogs);
 
         // When, Then
         assertThrows(ApplicationException.class,
@@ -118,12 +121,14 @@ class EventLetterServiceTest {
     @Test
     void getEventLetterWithLetterViewCountOver3() {
         // Given
-        EventLetter eventLetter = EventLetter.of(user, "senderName", "contents", "imageUrl", "contactInfo");
+        EventLetter eventLetter = EventLetter.of(user, "senderName", "contents",
+                "imageUrl", "contactInfo");
         eventLetter.increaseViewCount();
         eventLetter.increaseViewCount();
         eventLetter.increaseViewCount();
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(eventLetterLogRepository.countByUser(any())).thenReturn(0L);
+        when(eventLetterRepository.findByUser(user)).thenReturn(Optional.of(eventLetter));
+        when(eventLetterLogRepository.findAllByUserId(any())).thenReturn(eventLetterLogs);
         when(eventLetterRepository.findByIdWithPessimistic(any(), any())).thenReturn(Optional.of(eventLetter));
 
         // When, Then
@@ -177,10 +182,13 @@ class EventLetterServiceTest {
     @Test
     void findEventLetterThatIsMine() {
         // Given
-        when(eventLetterRepository.findByIdWithPessimistic(any(), any())).thenReturn(Optional.of(eventLetter));
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        when(eventLetterRepository.findByUser(user)).thenReturn(Optional.of(eventLetter));
+        when(eventLetterLogRepository.findAllByUserId(any())).thenReturn(eventLetterLogs);
+        when(eventLetterRepository.findByIdWithPessimistic(any(), any())).thenReturn(Optional.of(eventLetter));
+
         // When
-        EventLetterResponse response = eventLetterService.findLetter(1L, 1L);
+        WhoseEventLetterResponse response = eventLetterService.findLetter(1L, 1L);
 
         // Then
         assertThat(response).isNotNull();

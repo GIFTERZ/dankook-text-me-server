@@ -85,4 +85,8 @@ public class User extends BaseEntity {
     public boolean isUnAuthorized(User user) {
         return this != user;
     }
+
+    public boolean isSameId(Long userId) {
+        return this.id.equals(userId);
+    }
 }

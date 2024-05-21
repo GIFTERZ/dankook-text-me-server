@@ -9,4 +9,5 @@ import lombok.*;
 public class AllEventLetterResponse {
     private Long id;
     private String imageUrl;
+    private boolean isMine;
 }

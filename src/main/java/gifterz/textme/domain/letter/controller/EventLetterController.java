@@ -3,6 +3,7 @@ package gifterz.textme.domain.letter.controller;
 import gifterz.textme.domain.letter.dto.request.EventLetterRequest;
 import gifterz.textme.domain.letter.dto.response.AllEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
+import gifterz.textme.domain.letter.dto.response.WhoseEventLetterResponse;
 import gifterz.textme.domain.letter.service.EventLetterService;
 import gifterz.textme.global.auth.role.DkuAuth;
 import gifterz.textme.global.security.jwt.JwtAuthentication;
@@ -29,19 +30,20 @@ public class EventLetterController {
 
     @GetMapping
     @DkuAuth
-    public ResponseEntity<List<AllEventLetterResponse>> getLettersByGender(
+    public ResponseEntity<List<AllEventLetterResponse>> getLettersByFiltering(
             JwtAuthentication auth,
-            @RequestParam(required = false) String gender
+            @RequestParam(required = false) String gender,
+            @RequestParam(required = false) Boolean hasContact
     ) {
-        List<AllEventLetterResponse> letterResponses = eventLetterService.getLettersByGender(gender);
+        List<AllEventLetterResponse> letterResponses = eventLetterService.getLettersByFiltering(auth.getUserId(), gender, hasContact);
         return ResponseEntity.ok().body(letterResponses);
     }
 
     @GetMapping("/{id}")
     @DkuAuth
-    public ResponseEntity<EventLetterResponse> findLetter(JwtAuthentication auth,
+    public ResponseEntity<WhoseEventLetterResponse> findLetter(JwtAuthentication auth,
                                                           @PathVariable("id") final Long letterId) {
-        EventLetterResponse response = eventLetterService.findLetter(auth.getUserId(), letterId);
+        WhoseEventLetterResponse response = eventLetterService.findLetter(auth.getUserId(), letterId);
         return ResponseEntity.ok().body(response);
     }
 

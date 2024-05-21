@@ -6,12 +6,10 @@ import gifterz.textme.domain.letter.dto.request.Target;
 import gifterz.textme.domain.letter.dto.response.AdminEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.AllEventLetterResponse;
 import gifterz.textme.domain.letter.dto.response.EventLetterResponse;
+import gifterz.textme.domain.letter.dto.response.WhoseEventLetterResponse;
 import gifterz.textme.domain.letter.entity.EventLetter;
 import gifterz.textme.domain.letter.entity.EventLetterLog;
-import gifterz.textme.domain.letter.exception.AlreadyViewedUserException;
-import gifterz.textme.domain.letter.exception.ExceedLetterViewCountException;
-import gifterz.textme.domain.letter.exception.ExceedUserViewCountException;
-import gifterz.textme.domain.letter.exception.LetterNotFoundException;
+import gifterz.textme.domain.letter.exception.*;
 import gifterz.textme.domain.letter.repository.EventLetterLogRepository;
 import gifterz.textme.domain.letter.repository.EventLetterRepository;
 import gifterz.textme.domain.user.entity.User;
@@ -23,8 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
 
 import static gifterz.textme.domain.entity.StatusType.ACTIVATE;
 import static gifterz.textme.domain.entity.StatusType.PENDING;
@@ -37,33 +34,43 @@ public class EventLetterService {
     private final EventLetterRepository eventLetterRepository;
     private final EventLetterLogRepository eventLetterLogRepository;
     private final UserRepository userRepository;
-    public static ConcurrentHashMap<Long, HashSet<Long>> viewMap = new ConcurrentHashMap<>();
 
     @Transactional
     public void sendLetter(Long senderId, SenderInfo senderInfo, Target letterInfo) {
         User user = userRepository.findById(senderId).orElseThrow(UserNotFoundException::new);
+        eventLetterRepository.findByUser(user).ifPresent(eventLetter -> {
+            throw new AlreadyPostedUserException();
+        });
         EventLetter eventLetter = EventLetter.of(user, senderInfo.getSenderName(), letterInfo.getContents(),
                 letterInfo.getImageUrl(), senderInfo.getContactInfo());
         eventLetterRepository.save(eventLetter);
     }
 
-    public List<AllEventLetterResponse> getLettersByGender(String gender) {
-        List<EventLetter> eventLetters = findEventLettersByGender(gender);
+    public List<AllEventLetterResponse> getLettersByFiltering(Long userId, String gender, Boolean hasContact) {
+        List<EventLetter> eventLetters = findEventLettersByGenderAndContact(gender, hasContact);
 
         return eventLetters.stream()
                 .map(eventLetter -> AllEventLetterResponse.builder()
                         .id(eventLetter.getId())
-                        .imageUrl(eventLetter.getImageUrl()).build())
+                        .imageUrl(eventLetter.getImageUrl())
+                        .isMine(eventLetter.isUserLetter(userId))
+                        .build())
                 .toList();
     }
 
-    private List<EventLetter> findEventLettersByGender(String gender) {
+    private List<EventLetter> findEventLettersByGenderAndContact(String gender, Boolean hasContact) {
         if (StringUtils.hasText(gender)) {
             gender = convertGender(gender);
-            return eventLetterRepository.findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
+            if (hasContact == null || !hasContact) {
+                return eventLetterRepository.findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
+            }
+            return eventLetterRepository.findAllByUserGenderAndStatusAndContactInfoNotNull(gender, ACTIVATE.getStatus());
         }
 
-        return eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
+        if (hasContact == null || !hasContact) {
+            return eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
+        }
+        return eventLetterRepository.findAllByStatusAndContactInfoNotNull(ACTIVATE.getStatus());
     }
 
     private String convertGender(String gender) {
@@ -76,32 +83,40 @@ public class EventLetterService {
     }
 
     @Transactional
-    public EventLetterResponse findLetter(Long userId, Long letterId) {
+    public WhoseEventLetterResponse findLetter(Long userId, Long letterId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        checkAlreadyViewedUser(userId, letterId);
+        EventLetter myEventLetter = eventLetterRepository.findByUser(user).orElseThrow(NotPostedUserException::new);
 
-        long userViewCount = eventLetterLogRepository.countByUser(user);
+        List<EventLetterLog> viewedLogs = eventLetterLogRepository.findAllByUserId(userId);
+        long userViewCount = viewedLogs.size();
         checkUserViewCount(userViewCount);
 
         EventLetter eventLetter = eventLetterRepository
                 .findByIdWithPessimistic(letterId, ACTIVATE.getStatus()).orElseThrow(LetterNotFoundException::new);
         checkLetterViewCount(eventLetter.getViewCount());
 
-        if (eventLetter.getUser() == user) {
-            return EventLetterResponse.of(eventLetter);
+        if (myEventLetter.equals(eventLetter)) {
+            return WhoseEventLetterResponse.of(eventLetter, true);
         }
+
+        checkIsViewedEventLetter(viewedLogs, eventLetter);
+
         eventLetter.increaseViewCount();
 
         EventLetterLog eventLetterLog = EventLetterLog.of(user, eventLetter);
         eventLetterLogRepository.save(eventLetterLog);
 
-        return EventLetterResponse.of(eventLetter);
+        return WhoseEventLetterResponse.of(eventLetter, false);
     }
 
-    private void checkAlreadyViewedUser(Long userId, Long letterId) {
-        if (viewMap.getOrDefault(letterId, new HashSet<>()).contains(userId)) {
-            throw new AlreadyViewedUserException();
-        }
+    private void checkIsViewedEventLetter(List<EventLetterLog> viewedLogs, EventLetter eventLetter) {
+        viewedLogs.forEach(eventLetterLog -> {
+            EventLetter viewedEventLetter = eventLetterLog.getEventLetter();
+            Long viewedEventLetterId = viewedEventLetter.getId();
+            if (Objects.equals(eventLetter.getId(), viewedEventLetterId)) {
+                throw new AlreadyViewedUserException();
+            }
+        });
     }
 
     private void checkUserViewCount(long viewCount) {
@@ -164,7 +179,7 @@ public class EventLetterService {
         List<EventLetterLog> eventLetterLogs = eventLetterLogRepository.findAllByUserId(userId);
 
         return eventLetterLogs.stream()
-                .map(eventLetterLog -> EventLetterResponse.of(eventLetterLog.getEventLetter()))
+                .map(eventLetterLog -> EventLetterResponse.from(eventLetterLog.getEventLetter()))
                 .toList();
     }
 
@@ -172,12 +187,12 @@ public class EventLetterService {
         if (StringUtils.hasText(gender)) {
             gender = convertGender(gender);
             return eventLetterRepository.findAllByContactInfoContainingAndGender(gender, ACTIVATE.getStatus()).stream()
-                    .map(EventLetterResponse::of)
+                    .map(EventLetterResponse::from)
                     .toList();
         }
 
         return eventLetterRepository.findByContactInfoContaining(ACTIVATE.getStatus()).stream()
-                .map(EventLetterResponse::of)
+                .map(EventLetterResponse::from)
                 .toList();
     }
 }
