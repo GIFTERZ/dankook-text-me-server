@@ -30,7 +30,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static gifterz.textme.domain.letter.entity.EventLetter.MAX_VIEW_COUNT;
-import static gifterz.textme.domain.letter.service.EventLetterService.viewMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -61,11 +60,6 @@ class EventLetterServiceTest {
                 "imageUrl", "contactInfo");
         eventLetterLog = EventLetterLog.of(user, eventLetter);
         eventLetterLogs.add(eventLetterLog);
-    }
-
-    @AfterEach()
-    void clearViewMap() {
-        viewMap.clear();
     }
 
     @Test
@@ -127,12 +121,14 @@ class EventLetterServiceTest {
     @Test
     void getEventLetterWithLetterViewCountOver3() {
         // Given
-        EventLetter eventLetter = EventLetter.of(user, "senderName", "contents", "imageUrl", "contactInfo");
+        EventLetter eventLetter = EventLetter.of(user, "senderName", "contents",
+                "imageUrl", "contactInfo");
         eventLetter.increaseViewCount();
         eventLetter.increaseViewCount();
         eventLetter.increaseViewCount();
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
-        when(eventLetterLogRepository.countByUser(any())).thenReturn(0L);
+        when(eventLetterRepository.findByUser(user)).thenReturn(Optional.of(eventLetter));
+        when(eventLetterLogRepository.findByUser(user)).thenReturn(eventLetterLogs);
         when(eventLetterRepository.findByIdWithPessimistic(any(), any())).thenReturn(Optional.of(eventLetter));
 
         // When, Then
