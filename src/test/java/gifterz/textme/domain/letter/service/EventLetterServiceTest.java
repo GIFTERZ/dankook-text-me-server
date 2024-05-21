@@ -109,7 +109,7 @@ class EventLetterServiceTest {
         eventLetterLogs.add(eventLetterLog);
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(eventLetterRepository.findByUser(user)).thenReturn(Optional.of(eventLetter));
-        when(eventLetterLogRepository.findByUser(user)).thenReturn(eventLetterLogs);
+        when(eventLetterLogRepository.findAllByUserId(any())).thenReturn(eventLetterLogs);
 
         // When, Then
         assertThrows(ApplicationException.class,
@@ -128,7 +128,7 @@ class EventLetterServiceTest {
         eventLetter.increaseViewCount();
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(eventLetterRepository.findByUser(user)).thenReturn(Optional.of(eventLetter));
-        when(eventLetterLogRepository.findByUser(user)).thenReturn(eventLetterLogs);
+        when(eventLetterLogRepository.findAllByUserId(any())).thenReturn(eventLetterLogs);
         when(eventLetterRepository.findByIdWithPessimistic(any(), any())).thenReturn(Optional.of(eventLetter));
 
         // When, Then
@@ -184,7 +184,7 @@ class EventLetterServiceTest {
         // Given
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(eventLetterRepository.findByUser(user)).thenReturn(Optional.of(eventLetter));
-        when(eventLetterLogRepository.findByUser(user)).thenReturn(eventLetterLogs);
+        when(eventLetterLogRepository.findAllByUserId(any())).thenReturn(eventLetterLogs);
         when(eventLetterRepository.findByIdWithPessimistic(any(), any())).thenReturn(Optional.of(eventLetter));
 
         // When
