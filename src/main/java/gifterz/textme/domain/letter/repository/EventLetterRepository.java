@@ -16,11 +16,15 @@ public interface EventLetterRepository extends JpaRepository<EventLetter, Long> 
 
     List<EventLetter> findAllByUserGenderAndStatus(String gender, String status);
 
+    List<EventLetter> findAllByUserGenderAndStatusAndContactInfoNotNull(String gender, String status);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select e from EventLetter e where e.id = :id and e.status = :status")
     Optional<EventLetter> findByIdWithPessimistic(Long id, String status);
 
     List<EventLetter> findAllByStatus(String status);
+
+    List<EventLetter> findAllByStatusAndContactInfoNotNull(String status);
 
     @Query("select e from EventLetter e where e.contactInfo is not null and e.status = :status")
     List<EventLetter> findByContactInfoContaining(String status);

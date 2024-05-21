@@ -30,11 +30,12 @@ public class EventLetterController {
 
     @GetMapping
     @DkuAuth
-    public ResponseEntity<List<AllEventLetterResponse>> getLettersByGender(
+    public ResponseEntity<List<AllEventLetterResponse>> getLettersByFiltering(
             JwtAuthentication auth,
-            @RequestParam(required = false) String gender
+            @RequestParam(required = false) String gender,
+            @RequestParam(required = false) Boolean hasContact
     ) {
-        List<AllEventLetterResponse> letterResponses = eventLetterService.getLettersByGender(gender);
+        List<AllEventLetterResponse> letterResponses = eventLetterService.getLettersByFiltering(auth.getUserId(), gender, hasContact);
         return ResponseEntity.ok().body(letterResponses);
     }
 

@@ -66,6 +66,10 @@ public class EventLetter extends BaseEntity {
         this.status = StatusType.fromStatus(status).getStatus();
     }
 
+    public boolean isUserLetter(Long userId) {
+        return this.user.isSameId(userId);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,4 +89,5 @@ public class EventLetter extends BaseEntity {
     public int hashCode() {
         return Objects.hash(id, user, senderName, contents, imageUrl, contactInfo);
     }
+
 }
