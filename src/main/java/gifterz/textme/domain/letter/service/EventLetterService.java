@@ -42,6 +42,9 @@ public class EventLetterService {
     @Transactional
     public void sendLetter(Long senderId, SenderInfo senderInfo, Target letterInfo) {
         User user = userRepository.findById(senderId).orElseThrow(UserNotFoundException::new);
+        eventLetterRepository.findByUser(user).ifPresent(eventLetter -> {
+            throw new AlreadyPostedUserException();
+        });
         EventLetter eventLetter = EventLetter.of(user, senderInfo.getSenderName(), letterInfo.getContents(),
                 letterInfo.getImageUrl(), senderInfo.getContactInfo());
         eventLetterRepository.save(eventLetter);
