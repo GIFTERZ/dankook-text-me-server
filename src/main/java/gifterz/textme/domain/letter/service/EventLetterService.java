@@ -87,7 +87,7 @@ public class EventLetterService {
                 .findByIdWithPessimistic(letterId, ACTIVATE.getStatus()).orElseThrow(LetterNotFoundException::new);
         checkLetterViewCount(eventLetter.getViewCount());
 
-        if (eventLetter.getUser() == user) {
+        if (myEventLetter.equals(eventLetter)) {
             return WhoseEventLetterResponse.of(eventLetter, true);
         }
         eventLetter.increaseViewCount();
