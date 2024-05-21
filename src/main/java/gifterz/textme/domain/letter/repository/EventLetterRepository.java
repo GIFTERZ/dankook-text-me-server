@@ -1,6 +1,7 @@
 package gifterz.textme.domain.letter.repository;
 
 import gifterz.textme.domain.letter.entity.EventLetter;
+import gifterz.textme.domain.user.entity.User;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -27,4 +28,6 @@ public interface EventLetterRepository extends JpaRepository<EventLetter, Long> 
     @Query("select e FROM EventLetter e " +
             "WHERE e.contactInfo is not null and e.user.gender = :gender and e.status = :status")
     List<EventLetter> findAllByContactInfoContainingAndGender(String gender, String status);
+
+    Optional<EventLetter> findByUser(User user);
 }
