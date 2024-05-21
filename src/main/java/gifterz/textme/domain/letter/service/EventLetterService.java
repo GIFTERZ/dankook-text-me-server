@@ -79,7 +79,7 @@ public class EventLetterService {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         EventLetter myEventLetter = eventLetterRepository.findByUser(user).orElseThrow(NotPostedUserException::new);
 
-        List<EventLetterLog> viewedLogs = eventLetterLogRepository.findByUser(user);
+        List<EventLetterLog> viewedLogs = eventLetterLogRepository.findAllByUserId(userId);
         long userViewCount = viewedLogs.size();
         checkUserViewCount(userViewCount);
 
