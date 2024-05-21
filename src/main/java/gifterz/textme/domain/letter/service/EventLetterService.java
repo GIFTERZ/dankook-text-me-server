@@ -67,12 +67,12 @@ public class EventLetterService {
                 return eventLetterRepository.findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
             }
             return eventLetterRepository.findAllByUserGenderAndStatusAndContactInfoNotNull(gender, ACTIVATE.getStatus());
-        } else {
-            if (hasContact == null || !hasContact) {
-                return eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
-            }
-            return eventLetterRepository.findAllByStatusAndContactInfoNotNull(ACTIVATE.getStatus());
         }
+
+        if (hasContact == null || !hasContact) {
+            return eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
+        }
+        return eventLetterRepository.findAllByStatusAndContactInfoNotNull(ACTIVATE.getStatus());
     }
 
     private String convertGender(String gender) {
