@@ -55,7 +55,7 @@ public class EventLetterService {
                 .map(eventLetter -> AllEventLetterResponse.builder()
                         .id(eventLetter.getId())
                         .imageUrl(eventLetter.getImageUrl())
-                        .isMine(eventLetter.getUser().getId().equals(userId))
+                        .isMine(eventLetter.isUserLetter(userId))
                         .build())
                 .toList();
     }
