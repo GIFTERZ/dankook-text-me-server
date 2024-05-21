@@ -48,23 +48,31 @@ public class EventLetterService {
         eventLetterRepository.save(eventLetter);
     }
 
-    public List<AllEventLetterResponse> getLettersByGender(String gender) {
-        List<EventLetter> eventLetters = findEventLettersByGender(gender);
+    public List<AllEventLetterResponse> getLettersByFiltering(Long userId, String gender, Boolean isContact) {
+        List<EventLetter> eventLetters = findEventLettersByGenderAndContact(gender, isContact);
 
         return eventLetters.stream()
                 .map(eventLetter -> AllEventLetterResponse.builder()
                         .id(eventLetter.getId())
-                        .imageUrl(eventLetter.getImageUrl()).build())
+                        .imageUrl(eventLetter.getImageUrl())
+                        .isMine(eventLetter.getUser().getId().equals(userId))
+                        .build())
                 .toList();
     }
 
-    private List<EventLetter> findEventLettersByGender(String gender) {
+    private List<EventLetter> findEventLettersByGenderAndContact(String gender, Boolean isContact) {
         if (StringUtils.hasText(gender)) {
             gender = convertGender(gender);
-            return eventLetterRepository.findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
+            if (isContact == null || !isContact) {
+                return eventLetterRepository.findAllByUserGenderAndStatus(gender, ACTIVATE.getStatus());
+            }
+            return eventLetterRepository.findAllByUserGenderAndStatusAndContactInfoNotNull(gender, ACTIVATE.getStatus());
+        } else {
+            if (isContact == null || !isContact) {
+                return eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
+            }
+            return eventLetterRepository.findAllByStatusAndContactInfoNotNull(ACTIVATE.getStatus());
         }
-
-        return eventLetterRepository.findAllByStatus(ACTIVATE.getStatus());
     }
 
     private String convertGender(String gender) {
