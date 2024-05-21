@@ -83,14 +83,13 @@ class EventLetterServiceTest {
     @Test
     void getEventLetter() {
         // Given
-        viewMap.put(1L, new HashSet<>());
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(eventLetterRepository.findByUser(user)).thenReturn(Optional.of(eventLetter));
         when(eventLetterRepository.findByIdWithPessimistic(1L, StatusType.ACTIVATE.getStatus()))
                 .thenReturn(Optional.of(eventLetter));
-        when(eventLetterLogRepository.countByUser(user)).thenReturn(0L);
 
         // When
-        EventLetterResponse response = eventLetterService.findLetter(1L, 1L);
+        WhoseEventLetterResponse response = eventLetterService.findLetter(1L, 1L);
 
         // Then
         assertAll(
