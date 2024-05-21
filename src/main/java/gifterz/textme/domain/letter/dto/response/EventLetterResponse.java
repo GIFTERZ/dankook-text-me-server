@@ -11,7 +11,7 @@ public record EventLetterResponse(
         String contactInfo
 
 ) {
-    public static EventLetterResponse of(EventLetter eventLetter) {
+    public static EventLetterResponse from(EventLetter eventLetter) {
         return new EventLetterResponse(
                 eventLetter.getId(),
                 eventLetter.getSenderName(),

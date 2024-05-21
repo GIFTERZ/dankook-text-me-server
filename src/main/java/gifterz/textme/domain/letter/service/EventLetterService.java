@@ -164,7 +164,7 @@ public class EventLetterService {
         List<EventLetterLog> eventLetterLogs = eventLetterLogRepository.findAllByUserId(userId);
 
         return eventLetterLogs.stream()
-                .map(eventLetterLog -> EventLetterResponse.of(eventLetterLog.getEventLetter()))
+                .map(eventLetterLog -> EventLetterResponse.from(eventLetterLog.getEventLetter()))
                 .toList();
     }
 
@@ -172,12 +172,12 @@ public class EventLetterService {
         if (StringUtils.hasText(gender)) {
             gender = convertGender(gender);
             return eventLetterRepository.findAllByContactInfoContainingAndGender(gender, ACTIVATE.getStatus()).stream()
-                    .map(EventLetterResponse::of)
+                    .map(EventLetterResponse::from)
                     .toList();
         }
 
         return eventLetterRepository.findByContactInfoContaining(ACTIVATE.getStatus()).stream()
-                .map(EventLetterResponse::of)
+                .map(EventLetterResponse::from)
                 .toList();
     }
 }
