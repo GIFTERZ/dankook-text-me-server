@@ -35,7 +35,6 @@ public class EventLetterService {
     private final EventLetterRepository eventLetterRepository;
     private final EventLetterLogRepository eventLetterLogRepository;
     private final UserRepository userRepository;
-    public static ConcurrentHashMap<Long, HashSet<Long>> viewMap = new ConcurrentHashMap<>();
 
     @Transactional
     public void sendLetter(Long senderId, SenderInfo senderInfo, Target letterInfo) {
