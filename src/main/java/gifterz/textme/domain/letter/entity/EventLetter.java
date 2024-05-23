@@ -37,15 +37,17 @@ public class EventLetter extends BaseEntity {
 
     private Integer viewCount;
 
+    private Boolean isEvent;
+
     public final static int MAX_VIEW_COUNT = 3;
 
     public static EventLetter of(User user, String senderName, String contents,
                                  String imageUrl, String contactInfo) {
-        return new EventLetter(user, senderName, contents, imageUrl, contactInfo, 0);
+        return new EventLetter(user, senderName, contents, imageUrl, contactInfo, 0, false);
     }
 
     private EventLetter(User user, String senderName, String contents,
-                        String imageUrl, String contactInfo, Integer viewCount) {
+                        String imageUrl, String contactInfo, Integer viewCount, Boolean isEvent) {
         super(StatusType.ACTIVATE.getStatus());
         this.user = user;
         this.senderName = senderName;
@@ -53,6 +55,7 @@ public class EventLetter extends BaseEntity {
         this.imageUrl = imageUrl;
         this.contactInfo = contactInfo;
         this.viewCount = viewCount;
+        this.isEvent = isEvent;
     }
 
     public void increaseViewCount() {
