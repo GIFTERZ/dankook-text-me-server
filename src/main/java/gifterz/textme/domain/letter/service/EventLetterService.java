@@ -88,7 +88,7 @@ public class EventLetterService {
         EventLetter myEventLetter = eventLetterRepository.findByUser(user).orElseThrow(NotPostedUserException::new);
 
         List<EventLetterLog> viewedLogs = eventLetterLogRepository.findAllByUserId(userId);
-        long userViewCount = viewedLogs.size();
+        long userViewCount = viewCountWithoutEvent(viewedLogs);
         checkUserViewCount(userViewCount);
 
         EventLetter eventLetter = eventLetterRepository
@@ -107,6 +107,12 @@ public class EventLetterService {
         eventLetterLogRepository.save(eventLetterLog);
 
         return WhoseEventLetterResponse.of(eventLetter, false);
+    }
+
+    private long viewCountWithoutEvent(List<EventLetterLog> viewedLogs) {
+        return viewedLogs.stream()
+                .filter(eventLetterLog -> !eventLetterLog.getEventLetter().getIsEvent())
+                .count();
     }
 
     private void checkIsViewedEventLetter(List<EventLetterLog> viewedLogs, EventLetter eventLetter) {
