@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import static gifterz.textme.domain.entity.StatusType.ACTIVATE;
 import static gifterz.textme.domain.entity.StatusType.PENDING;
@@ -48,14 +49,43 @@ public class EventLetterService {
 
     public List<AllEventLetterResponse> getLettersByFiltering(Long userId, String gender, Boolean hasContact) {
         List<EventLetter> eventLetters = findEventLettersByGenderAndContact(gender, hasContact);
+        List<EventLetterLog> viewedLogs = eventLetterLogRepository.findAllByUserId(userId);
+        if (checkViewEvent(viewedLogs)) {
+            return getAllEventLetterResponses(userId, eventLetters, filterIsNotEventAndIsNotMine(userId));
+        }
+        return getAllEventLetterResponses(userId, eventLetters, filterIsEventOrIsNotMine(userId));
+    }
 
+    private Predicate<EventLetter> filterIsNotEventAndIsNotMine(Long userId) {
+        return eventLetter -> !eventLetter.getIsEvent() && !eventLetter.isUserLetter(userId);
+    }
+
+    private Predicate<EventLetter> filterIsEventOrIsNotMine(Long userId) {
+        return eventLetter -> eventLetter.getIsEvent() || !eventLetter.isUserLetter(userId);
+    }
+
+    private List<AllEventLetterResponse> getAllEventLetterResponses(Long userId, List<EventLetter> eventLetters,
+                                                                    Predicate<EventLetter> filter) {
         return eventLetters.stream()
+                .filter(filter)
                 .map(eventLetter -> AllEventLetterResponse.builder()
                         .id(eventLetter.getId())
                         .imageUrl(eventLetter.getImageUrl())
                         .isMine(eventLetter.isUserLetter(userId))
                         .build())
                 .toList();
+    }
+
+    private boolean checkViewEvent(List<EventLetterLog> viewedLogs) {
+        boolean isViewedEventLetter = false;
+        for (EventLetterLog eventLetterLog : viewedLogs) {
+            EventLetter viewedEventLetter = eventLetterLog.getEventLetter();
+            if (viewedEventLetter.getIsEvent()) {
+                isViewedEventLetter = true;
+                break;
+            }
+        }
+        return isViewedEventLetter;
     }
 
     private List<EventLetter> findEventLettersByGenderAndContact(String gender, Boolean hasContact) {
@@ -88,7 +118,7 @@ public class EventLetterService {
         EventLetter myEventLetter = eventLetterRepository.findByUser(user).orElseThrow(NotPostedUserException::new);
 
         List<EventLetterLog> viewedLogs = eventLetterLogRepository.findAllByUserId(userId);
-        long userViewCount = viewedLogs.size();
+        long userViewCount = viewCountWithoutEvent(viewedLogs);
         checkUserViewCount(userViewCount);
 
         EventLetter eventLetter = eventLetterRepository
@@ -107,6 +137,12 @@ public class EventLetterService {
         eventLetterLogRepository.save(eventLetterLog);
 
         return WhoseEventLetterResponse.of(eventLetter, false);
+    }
+
+    private long viewCountWithoutEvent(List<EventLetterLog> viewedLogs) {
+        return viewedLogs.stream()
+                .filter(eventLetterLog -> !eventLetterLog.getEventLetter().getIsEvent())
+                .count();
     }
 
     private void checkIsViewedEventLetter(List<EventLetterLog> viewedLogs, EventLetter eventLetter) {
