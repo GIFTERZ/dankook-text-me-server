@@ -51,7 +51,7 @@ public class S3Service {
         try (InputStream inputStream = resizedFile.getInputStream()) {
             amazonS3Client.putObject(bucket, s3FileName, inputStream, objMeta);
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다.");
+            throw new UploadFileException();
         }
         return findFile(s3FileName);
     }

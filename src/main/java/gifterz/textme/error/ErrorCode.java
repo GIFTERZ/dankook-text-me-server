@@ -42,6 +42,7 @@ public enum ErrorCode {
     INVALID_FILE_CONTENT(400, "F001", "적절하지 않은 파일 형식입니다."),
     Illegal_FILE(400, "F002", "업로드 할 수 없는 이미지입니다."),
     FAIL_FILE_RESIZE(400, "F003", "파일 리사이즈에 실패했습니다.");
+    FILE_UPLOAD_ERROR(500, "F005", "파일 업로드에 실패했습니다.");
 
     private final int httpStatus;
     private final String code;

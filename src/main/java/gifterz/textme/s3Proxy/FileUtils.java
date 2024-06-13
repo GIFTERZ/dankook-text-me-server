@@ -19,6 +19,12 @@ import java.io.IOException;
 @Component
 public class FileUtils {
     public static final int MAX_FILE_SIZE = 15000000;
+
+    public static String getFormatName(MultipartFile multipartFile) {
+        int beginIndex = Objects.requireNonNull(multipartFile.getContentType()).lastIndexOf("/") + 1;
+        return multipartFile.getContentType().substring(beginIndex);
+    }
+
     public static void checkContentType(String contentType) {
         if (ObjectUtils.isEmpty(contentType)) {
             throw new InvalidFileContentException();
