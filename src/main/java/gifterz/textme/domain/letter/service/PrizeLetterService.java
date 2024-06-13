@@ -1,8 +1,10 @@
 package gifterz.textme.domain.letter.service;
 
 import gifterz.textme.domain.letter.dto.response.AllPrizeLettersResponse;
+import gifterz.textme.domain.letter.dto.response.PrizeLetterResponse;
 import gifterz.textme.domain.letter.entity.PrizeLetter;
 import gifterz.textme.domain.letter.entity.PrizeLetterVO;
+import gifterz.textme.domain.letter.exception.PrizeLetterNotFoundException;
 import gifterz.textme.domain.letter.repository.PrizeLetterRepository;
 import gifterz.textme.domain.user.entity.User;
 import gifterz.textme.domain.user.exception.UserNotFoundException;
@@ -46,4 +48,16 @@ public class PrizeLetterService {
                 .toList();
     }
 
+    public PrizeLetterResponse getPrizeLetter(Long id) {
+        PrizeLetter prizeLetter = prizeLetterRepository.findById(id).orElseThrow(PrizeLetterNotFoundException::new);
+        return PrizeLetterResponse.builder()
+                .id(prizeLetter.getId())
+                .senderName(prizeLetter.getUser().getName())
+                .contents(prizeLetter.getContents())
+                .webInfoImageUrl(prizeLetter.getWebInfoImageUrl())
+                .paymentImageUrl(prizeLetter.getPaymentImageUrl())
+                .cardImageUrl(prizeLetter.getCardImageUrl())
+                .category(prizeLetter.getCategory().name())
+                .build();
+    }
 }
