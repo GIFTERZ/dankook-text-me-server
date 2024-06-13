@@ -60,7 +60,7 @@ cloud:
       accessKey: ${AWS_ACCESS_KEY_ID}
       secretKey: ${AWS_SECRET_ACCESS_KEY}
     s3:
-      bucket: textme-bucket
+      bucket: dku-textme-bucket
     region:
       static: ap-northeast-2
     stack:
