@@ -20,7 +20,6 @@ public class RoleCheckAspect {
                 if (hasAuthority(authentication.getUserRole())) {
                     return;
                 }
-                throw new NoAuthorizationException("사용자 권한이 없습니다.");
             }
         }
         throw new NoAuthorizationException("사용자 권한이 없습니다.");
