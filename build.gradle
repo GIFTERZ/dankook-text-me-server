@@ -82,7 +82,7 @@ jib {
     }
 
     container {
-        jvmFlags = ["-Xms128m", "-Xmx128m"]
+        jvmFlags = ["-Xms1g", "-Xmx2g"]
         environment = [
                 'DB_URL'                        : System.getenv("DB_URL"),
                 'DB_USERNAME'                   : System.getenv("DB_USERNAME"),
