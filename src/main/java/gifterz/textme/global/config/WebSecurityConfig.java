@@ -1,6 +1,5 @@
 package gifterz.textme.global.config;
 
-import gifterz.textme.global.auth.role.UserRole;
 import gifterz.textme.global.security.jwt.AuthEntryPointJwt;
 import gifterz.textme.global.security.jwt.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ public class WebSecurityConfig {
     private static final String[] PUBLIC_URI = {
             "/users/**", "/letters/**", "/files/**", "/cards/**", "/oauth/**",
             "/swagger-ui/**", "/swagger-resources/**",
-            "/api-docs/**", "/error/**"
+            "/api-docs/**", "/error/**", "/actuator/**"
     };
 
     private static final String[] ADMIN_URI = {
