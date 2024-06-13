@@ -1,8 +1,11 @@
 package gifterz.textme.s3Proxy;
 
+import gifterz.textme.s3Proxy.exception.FileTooLargeException;
+import gifterz.textme.s3Proxy.exception.InvalidFileContentException;
 import gifterz.textme.s3Proxy.exception.InvalidFileException;
 import gifterz.textme.s3Proxy.exception.ResizeFileException;
 import marvin.image.MarvinImage;
+import org.apache.commons.lang3.ObjectUtils;
 import org.marvinproject.image.transform.scale.Scale;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
@@ -15,12 +18,18 @@ import java.io.IOException;
 
 @Component
 public class FileUtils {
+    public static final int MAX_FILE_SIZE = 15000000;
     public static void checkContentType(String contentType) {
         if (ObjectUtils.isEmpty(contentType)) {
             throw new InvalidFileContentException();
         }
     }
 
+    public static void checkFileSize(MultipartFile file) {
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new FileTooLargeException();
+        }
+    }
 
     public static MultipartFile resizeFile(String fileName, String fileFormatName, MultipartFile originalFile) {
         int targetWidth = 700;
