@@ -29,7 +29,7 @@ public class PrizeLetterController {
     }
 
     @GetMapping
-    @AdminAuth
+    @DkuAuth
     public ResponseEntity<List<AllPrizeLettersResponse>> getPrizeLetters(JwtAuthentication auth) {
         return ResponseEntity.ok(prizeLetterService.getPrizeLetters());
     }
