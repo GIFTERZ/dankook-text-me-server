@@ -15,7 +15,7 @@ public class FileUploadController {
     private final S3Service s3Service;
 
     @PostMapping(value = "/upload", consumes = "multipart/*")
-    public ResponseEntity<String> uploadFile(@RequestParam("images") MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<String> uploadFile(@RequestParam("images") MultipartFile multipartFile) {
         String uploadUrl = s3Service.upload(multipartFile);
         return ResponseEntity.ok().body(uploadUrl);
     }
