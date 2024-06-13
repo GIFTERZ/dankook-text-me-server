@@ -2,6 +2,7 @@ package gifterz.textme.domain.letter.controller;
 
 import gifterz.textme.domain.letter.dto.request.PrizeLetterRequest;
 import gifterz.textme.domain.letter.dto.response.AllPrizeLettersResponse;
+import gifterz.textme.domain.letter.dto.response.PrizeLetterResponse;
 import gifterz.textme.domain.letter.service.PrizeLetterService;
 import gifterz.textme.global.auth.role.AdminAuth;
 import gifterz.textme.global.auth.role.DkuAuth;
@@ -31,6 +32,12 @@ public class PrizeLetterController {
     @AdminAuth
     public ResponseEntity<List<AllPrizeLettersResponse>> getPrizeLetters(JwtAuthentication auth) {
         return ResponseEntity.ok(prizeLetterService.getPrizeLetters());
+    }
+
+    @GetMapping("{id}")
+    @AdminAuth
+    public ResponseEntity<PrizeLetterResponse> getPrizeLetter(JwtAuthentication auth, @PathVariable Long id) {
+        return ResponseEntity.ok(prizeLetterService.getPrizeLetter(id));
     }
 
 }
