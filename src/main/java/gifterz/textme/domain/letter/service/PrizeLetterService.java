@@ -1,5 +1,6 @@
 package gifterz.textme.domain.letter.service;
 
+import gifterz.textme.domain.letter.dto.response.AllPrizeLettersResponse;
 import gifterz.textme.domain.letter.entity.PrizeLetter;
 import gifterz.textme.domain.letter.entity.PrizeLetterVO;
 import gifterz.textme.domain.letter.repository.PrizeLetterRepository;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,6 +33,17 @@ public class PrizeLetterService {
                 uploadUrl1, uploadUrl2, prizeLetterVO.getCardImageUrl(), prizeLetterVO.getCategory());
 
         prizeLetterRepository.save(prizeLetter);
+    }
+
+    public List<AllPrizeLettersResponse> getPrizeLetters() {
+        List<PrizeLetter> prizeLetters = prizeLetterRepository.findAll();
+        return prizeLetters.stream()
+                .map(prizeLetter -> AllPrizeLettersResponse.builder()
+                        .id(prizeLetter.getId())
+                        .senderName(prizeLetter.getUser().getName())
+                        .cardImageUrl(prizeLetter.getCardImageUrl())
+                        .build())
+                .toList();
     }
 
 }
