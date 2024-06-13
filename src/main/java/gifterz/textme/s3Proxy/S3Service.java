@@ -34,7 +34,7 @@ public class S3Service {
 
     private final AmazonS3Client amazonS3Client;
 
-    public String upload(MultipartFile multipartFile) throws IOException {
+    public String upload(MultipartFile multipartFile) {
         String contentType = multipartFile.getContentType();
         if (ObjectUtils.isEmpty(contentType)) {
             throw new InvalidFileContentException();
