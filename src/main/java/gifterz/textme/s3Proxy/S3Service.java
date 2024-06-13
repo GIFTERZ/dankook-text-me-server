@@ -36,13 +36,11 @@ public class S3Service {
 
     public String upload(MultipartFile multipartFile) {
         String contentType = multipartFile.getContentType();
-        if (ObjectUtils.isEmpty(contentType)) {
-            throw new InvalidFileContentException();
-        }
         String s3FileName = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
         String fileFormatName = multipartFile.getContentType()
                 .substring(multipartFile.getContentType().lastIndexOf("/") + 1);
         MultipartFile resizedFile = resizeImage(s3FileName, fileFormatName, multipartFile);
+        FileUtils.checkContentType(contentType);
 
         if (resizedFile.getSize() > 14999999) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 사이즈가 커 업로드 할 수 없습니다.");

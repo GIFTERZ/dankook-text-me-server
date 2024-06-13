@@ -15,6 +15,12 @@ import java.io.IOException;
 
 @Component
 public class FileUtils {
+    public static void checkContentType(String contentType) {
+        if (ObjectUtils.isEmpty(contentType)) {
+            throw new InvalidFileContentException();
+        }
+    }
+
 
     public static MultipartFile resizeFile(String fileName, String fileFormatName, MultipartFile originalFile) {
         int targetWidth = 700;
