@@ -63,37 +63,5 @@ public class S3Service {
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
-    MultipartFile resizeImage(String fileName, String fileFormatName, MultipartFile originalImage) {
-        try {
-            BufferedImage image = ImageIO.read(originalImage.getInputStream());
-            if (image == null) {
-                throw new InvalidFileImage();
-            }
-            int originWidth = image.getWidth();
-            int originHeight = image.getHeight();
-            int targetWidth = 700;
 
-            if (originWidth < targetWidth) {
-                return originalImage;
-            }
-
-            MarvinImage imageMarvin = new MarvinImage(image);
-
-            Scale scale = new Scale();
-            scale.load();
-            scale.setAttribute("newWidth", targetWidth);
-            scale.setAttribute("newHeight", targetWidth * originHeight / originWidth);
-            scale.process(imageMarvin.clone(), imageMarvin, null, null, false);
-
-            BufferedImage imageNoAlpha = imageMarvin.getBufferedImageNoAlpha();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(imageNoAlpha, fileFormatName, baos);
-            baos.flush();
-
-            return new MockMultipartFile(fileName, baos.toByteArray());
-
-        } catch (IOException e) {
-            throw new failFileResize();
-        }
-    }
 }
