@@ -43,6 +43,7 @@ public class ApplicationExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleCommonException(final Exception err) {
         log.error("CommonException", err);
         final ErrorResponse response = ErrorResponse.from(ErrorCode.INTERNAL_SERVER_ERROR);
+        response.changeMessage(err.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

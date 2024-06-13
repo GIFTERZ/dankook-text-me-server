@@ -19,7 +19,6 @@ public class AuthTypeCheckAspect {
         for (Object arg : args) {
             if (arg instanceof JwtAuthentication authentication) {
                 if (hasDkuAuth(authentication.getUserRole(), authentication.getAuthType())) return;
-                throw new NoAuthorizationException("DKU 로그인 시에만 접근 가능합니다.");
             }
         }
         throw new NoAuthorizationException("DKU 로그인 시에만 접근 가능합니다.");
