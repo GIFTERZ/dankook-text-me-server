@@ -35,8 +35,10 @@ public class PrizeLetter extends BaseEntity {
 
     private Category category;
 
+    private String phoneNumber;
+
     private PrizeLetter(User user, String contents, String webInfoImageUrl, String paymentImageUrl,
-                        String cardImageUrl, Category category) {
+                        String cardImageUrl, Category category, String phoneNumber) {
         super(StatusType.ACTIVATE.getStatus());
         this.user = user;
         this.contents = contents;
@@ -44,11 +46,12 @@ public class PrizeLetter extends BaseEntity {
         this.paymentImageUrl = paymentImageUrl;
         this.cardImageUrl = cardImageUrl;
         this.category = category;
+        this.phoneNumber = phoneNumber;
     }
 
-    public static PrizeLetter of(User user, String contents,
-                                 String imageUrl1, String imageUrl2, String imageUrl3, Category category) {
-        return new PrizeLetter(user, contents, imageUrl1, imageUrl2, imageUrl3, category);
+    public static PrizeLetter of(User user, String contents, String webInfoImageUrl, String paymentImageUrl,
+                                 String cardImageUrl, Category category, String phoneNumber) {
+        return new PrizeLetter(user, contents, webInfoImageUrl, paymentImageUrl, cardImageUrl, category, phoneNumber);
     }
 
 }
