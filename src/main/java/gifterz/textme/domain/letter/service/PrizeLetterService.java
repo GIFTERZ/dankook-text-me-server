@@ -32,8 +32,8 @@ public class PrizeLetterService {
         String webInfoImageUrl = s3Service.upload(prizeLetterVO.getWebInfoImage());
         String paymentImageUrl = getPaymentImageUrl(prizeLetterVO.getPaymentImage());
 
-        PrizeLetter prizeLetter = PrizeLetter.of(user, prizeLetterVO.getContents(),
-                webInfoImageUrl, paymentImageUrl, prizeLetterVO.getCardImageUrl(), prizeLetterVO.getCategory());
+        PrizeLetter prizeLetter = PrizeLetter.of(user, prizeLetterVO.getContents(), webInfoImageUrl, paymentImageUrl,
+                prizeLetterVO.getCardImageUrl(), prizeLetterVO.getCategory(), prizeLetterVO.getPhoneNumber());
 
         prizeLetterRepository.save(prizeLetter);
     }
