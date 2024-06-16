@@ -4,18 +4,21 @@ import gifterz.textme.domain.letter.entity.Category;
 import gifterz.textme.domain.letter.entity.PrizeLetterVO;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.util.Optional;
 
 public record PrizeLetterRequest(
         String contents,
-        List<MultipartFile> images,
+        MultipartFile webInfoImage,
+        Optional<MultipartFile> paymentImage,
         String cardImageUrl,
         String category
 ) {
     public PrizeLetterVO toPrizeLetterVO() {
-        if (images.size() != 2) {
-            throw new IllegalArgumentException("이미지는 2개가 필요합니다.");
-        }
-        return PrizeLetterVO.of(contents, images.get(0), images.get(1), cardImageUrl, Category.fromName(category));
+        Category category = Category.fromName(this.category);
+        return paymentImage.map(
+                        paymentImage ->
+                                PrizeLetterVO.of(contents, webInfoImage, paymentImage, cardImageUrl, category))
+                .orElseGet(() ->
+                        PrizeLetterVO.of(contents, webInfoImage, null, cardImageUrl, category));
     }
 }
