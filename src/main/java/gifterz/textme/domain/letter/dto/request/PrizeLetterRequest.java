@@ -11,14 +11,15 @@ public record PrizeLetterRequest(
         MultipartFile webInfoImage,
         Optional<MultipartFile> paymentImage,
         String cardImageUrl,
-        String category
+        String category,
+        String phone
 ) {
     public PrizeLetterVO toPrizeLetterVO() {
         Category category = Category.fromName(this.category);
         return paymentImage.map(
                         paymentImage ->
-                                PrizeLetterVO.of(contents, webInfoImage, paymentImage, cardImageUrl, category))
+                                PrizeLetterVO.of(contents, webInfoImage, paymentImage, cardImageUrl, category, phone))
                 .orElseGet(() ->
-                        PrizeLetterVO.of(contents, webInfoImage, null, cardImageUrl, category));
+                        PrizeLetterVO.of(contents, webInfoImage, null, cardImageUrl, category, phone));
     }
 }
