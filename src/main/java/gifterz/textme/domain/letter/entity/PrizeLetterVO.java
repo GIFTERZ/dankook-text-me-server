@@ -20,8 +20,8 @@ public class PrizeLetterVO {
         this.category = category;
     }
 
-    public static PrizeLetterVO of(String contents, MultipartFile image1, MultipartFile image2,
+    public static PrizeLetterVO of(String contents, MultipartFile webInfoImage, MultipartFile paymentImage,
                                    String cardImageUrl, Category category) {
-        return new PrizeLetterVO(contents, image1, image2, cardImageUrl, category);
+        return new PrizeLetterVO(contents, webInfoImage, paymentImage, cardImageUrl, category);
     }
 }
