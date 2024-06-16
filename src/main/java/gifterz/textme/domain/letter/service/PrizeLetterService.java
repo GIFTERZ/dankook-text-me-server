@@ -13,6 +13,7 @@ import gifterz.textme.s3Proxy.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,13 +29,21 @@ public class PrizeLetterService {
     public void sendLetter(Long senderId, PrizeLetterVO prizeLetterVO) {
         User user = userRepository.findById(senderId).orElseThrow(UserNotFoundException::new);
 
-        String uploadUrl1 = s3Service.upload(prizeLetterVO.getWebInfoImage());
-        String uploadUrl2 = s3Service.upload(prizeLetterVO.getPaymentImage());
+        String webInfoImageUrl = s3Service.upload(prizeLetterVO.getWebInfoImage());
+        String paymentImageUrl = getPaymentImageUrl(prizeLetterVO.getPaymentImage());
 
         PrizeLetter prizeLetter = PrizeLetter.of(user, prizeLetterVO.getContents(),
-                uploadUrl1, uploadUrl2, prizeLetterVO.getCardImageUrl(), prizeLetterVO.getCategory());
+                webInfoImageUrl, paymentImageUrl, prizeLetterVO.getCardImageUrl(), prizeLetterVO.getCategory());
 
         prizeLetterRepository.save(prizeLetter);
+    }
+
+    private String getPaymentImageUrl(MultipartFile paymentImage) {
+        String paymentImageUrl = null;
+        if (paymentImage.getSize() > 0) {
+            paymentImageUrl = s3Service.upload(paymentImage);
+        }
+        return paymentImageUrl;
     }
 
     public List<AllPrizeLettersResponse> getPrizeLetters() {
