@@ -40,7 +40,7 @@ public class PrizeLetterService {
 
     private String getPaymentImageUrl(MultipartFile paymentImage) {
         String paymentImageUrl = null;
-        if (paymentImage.getSize() > 0) {
+        if (paymentImage == null || paymentImage.getSize() > 0) {
             paymentImageUrl = s3Service.upload(paymentImage);
         }
         return paymentImageUrl;
